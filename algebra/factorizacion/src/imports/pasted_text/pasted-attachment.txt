@@ -1,0 +1,366 @@
+Create a COMPLETE interactive educational web-app style prototype in FIGMA MAKE about FACTORIZACIÓN ALGEBRAICA following the SAME visual style and UX philosophy as my previous algebra tools:
+
+* soft pastel backgrounds
+* rounded cards
+* clean educational UI
+* modern mobile-first layout
+* smooth transitions
+* large typography
+* highly visual explanations
+* interactive learning
+* minimal cognitive overload
+* consistent color palette:
+
+  * soft pinks
+  * warm beige
+  * light green
+  * muted red highlights
+  * soft yellow/orange for emphasis
+* use the SAME type of interaction style used in my previous apps:
+
+  * guided learning
+  * click-to-reveal
+  * progressive steps
+  * interactive buttons
+  * drag and drop
+  * instant feedback
+  * encouraging tone
+
+IMPORTANT:
+This should feel like a REAL educational miniapp, not a slideshow.
+
+---
+
+## GENERAL STRUCTURE
+
+HOME SCREEN:
+Title:
+“Los Casos de Factorización”
+
+Subtitle:
+“Aprende a reconocer y resolver cada caso paso a paso”
+
+Background should include:
+
+* geometric shapes
+* circles
+* algebra-inspired decorations
+* soft animated feeling
+
+Below the title create a MENU OF FACTORIZATION CASES using rounded cards.
+
+Cases:
+
+1. Factor común
+2. Diferencia de cuadrados
+3. Trinomio cuadrado perfecto
+4. Trinomio de la forma x² + bx + c
+5. Trinomio de la forma ax² + bx + c
+6. Suma y diferencia de cubos
+
+Each case card should contain:
+
+* case number
+* title
+* small black circular “info” button
+* arrow button on the right side
+
+IMPORTANT:
+When hovering or clicking the small black info button:
+show a floating tooltip with a VERY short recognition tip.
+
+Examples:
+Factor común:
+“Busca el factor que se repite en todos los términos.”
+
+Diferencia de cuadrados:
+“Dos cuadrados perfectos separados por resta.”
+
+TCP:
+“Dos cuadrados perfectos y el doble producto.”
+
+etc.
+
+When clicking the arrow:
+navigate into the COMPLETE learning module for that case.
+
+---
+
+## FOR EACH FACTORIZATION CASE
+
+Each case must contain this SAME structure:
+
+1. INTRODUCTION FRAME
+2. STEP-BY-STEP VISUAL EXPLANATION
+3. GUIDED EXAMPLE
+4. INTERACTIVE MINI PRACTICE
+5. RETURN TO MENU BUTTON
+
+Use smooth animated transitions between frames.
+
+---
+
+## CASE 1 — FACTOR COMÚN
+
+INTRO:
+Explain visually that all terms share something in common.
+
+Example:
+6x + 9x²
+
+Show visually:
+
+* common numbers highlighted
+* common variables highlighted
+* arrows pointing to repeated factors
+
+STEP-BY-STEP:
+
+1. Identify common factor
+2. Divide each term
+3. Place remaining terms inside parentheses
+
+Make the factoring process animated:
+
+* common factor “pulls out”
+* terms slide into parentheses
+
+GUIDED EXAMPLE:
+12x² + 8x
+
+Interactive buttons:
+
+* “Identificar factor”
+* “Sacar factor”
+* “Completar paréntesis”
+
+PRACTICE:
+Drag expressions into:
+
+* “Tiene factor común”
+* “No tiene factor común”
+
+Instant feedback:
+
+* green glow for correct
+* shake animation for incorrect
+
+---
+
+## CASE 2 — DIFERENCIA DE CUADRADOS
+
+Use:
+a² - b² = (a+b)(a-b)
+
+VISUAL EXPLANATION:
+Show:
+
+* both terms as perfect squares
+* square roots appearing visually
+* subtraction sign highlighted in red
+
+GUIDED EXAMPLE:
+x² - 49
+
+Interactive flow:
+
+1. Click each square root
+2. Build both parentheses
+3. Choose signs
+
+Animation:
+parentheses assemble dynamically.
+
+PRACTICE:
+Match expressions to their factorized forms.
+
+---
+
+## CASE 3 — TRINOMIO CUADRADO PERFECTO
+
+Formula:
+a² + 2ab + b² = (a+b)²
+
+This section should be VERY visual.
+
+Show:
+
+* roots of first and last terms
+* multiplication animation
+* “2ab” verification
+
+Interactive sequence:
+
+1. Student selects roots
+2. System multiplies them
+3. Multiply by 2
+4. Verify middle term
+
+If correct:
+show:
+“¡Sí coincide!”
+
+If incorrect:
+show:
+“El término del medio no coincide.”
+
+GUIDED EXAMPLE:
+a² + 4a + 4
+
+Animate:
+(a+2)² assembling visually.
+
+PRACTICE:
+Students identify whether expressions ARE or ARE NOT TCP.
+
+---
+
+## CASE 4 — TRINOMIO x² + bx + c
+
+Explain visually:
+Find two numbers that:
+
+* multiply to c
+* add to b
+
+Use interactive number cards.
+
+GUIDED EXAMPLE:
+x² + 5x + 6
+
+Student clicks number pairs.
+
+Correct pair:
+2 and 3
+
+Then:
+automatically construct:
+(x+2)(x+3)
+
+PRACTICE:
+Multiple draggable number pair exercises.
+
+---
+
+## CASE 5 — TRINOMIO ax² + bx + c
+
+This should be more guided because it is harder.
+
+Use step-by-step decomposition method.
+
+GUIDED EXAMPLE:
+2x² + 7x + 3
+
+Flow:
+
+1. Multiply a*c
+2. Find numbers
+3. Split middle term
+4. Group visually
+5. Factor by grouping
+
+VERY IMPORTANT:
+Color-code grouped terms.
+
+Animate:
+grouping brackets appearing.
+
+PRACTICE:
+Students arrange shuffled steps in correct order.
+
+---
+
+## CASE 6 — SUMA Y DIFERENCIA DE CUBOS
+
+Use:
+a³ + b³ = (a+b)(a²-ab+b²)
+a³ - b³ = (a-b)(a²+ab+b²)
+
+VISUAL EXPLANATION:
+Show cube roots emerging from terms.
+
+GUIDED EXAMPLE:
+x³ + 8
+
+Interactive sequence:
+
+1. Identify cube roots
+2. Build first parentheses
+3. Construct second parentheses
+4. Choose correct signs
+
+IMPORTANT:
+Explain sign pattern visually using color coding.
+
+PRACTICE:
+Sign-selection challenge.
+
+---
+
+## GLOBAL PRACTICE GAME
+
+After all cases:
+create a MASTER GAME screen.
+
+Title:
+“Arrastra cada problema a su caso correspondiente”
+
+Create columns for each factorization case.
+
+At the bottom:
+multiple draggable expressions.
+
+Student drags each expression into the correct category.
+
+Include:
+
+* hover effects
+* snap animation
+* instant feedback
+
+Green button:
+“Mostrar respuestas”
+
+IMPORTANT:
+When clicked:
+answers appear TEMPORARILY for 3 seconds and then hide again.
+
+ALSO:
+Each draggable expression should be clickable.
+
+When clicked:
+open a MODAL or SIDE PANEL showing:
+
+* complete solution
+* visual step-by-step factoring process
+* highlighted reasoning
+
+---
+
+## UX / PEDAGOGY RULES
+
+VERY IMPORTANT:
+
+* Reduce cognitive overload
+* Never overcrowd screens
+* Use progressive disclosure
+* Keep explanations short
+* Use interaction instead of long text
+* Make every algebraic transformation animated
+* Encourage pattern recognition
+* Reinforce visual memory
+
+Use:
+
+* floating feedback
+* subtle animations
+* smooth transitions
+* highly interactive learning
+
+Tone:
+encouraging, modern, intelligent, educational.
+
+IMPORTANT:
+This should feel like a polished educational app for middle/high school students, not slides.
+
+Mobile-first design but responsive on desktop too.

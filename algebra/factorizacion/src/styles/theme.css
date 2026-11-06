@@ -1,0 +1,198 @@
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   EUREMA · Tokens de tema — paleta oficial "Ginkgo" v1.2
+   Reemplaza la paleta genérica shadcn por defecto.
+   ============================================================ */
+:root {
+  --font-size: 16px;
+  --background: #FDF6E8;
+  --foreground: #33291C;
+  --card: #FFFFFF;
+  --card-foreground: #33291C;
+  --popover: #FFFFFF;
+  --popover-foreground: #33291C;
+  --primary: #F2762E;
+  --primary-foreground: #ffffff;
+  --secondary: #DFF5F5;
+  --secondary-foreground: #1F8585;
+  --muted: #F0E2C4;
+  --muted-foreground: #8C7F63;
+  --accent: #FBEFCB;
+  --accent-foreground: #C15A1C;
+  --destructive: #D93A3A;
+  --destructive-foreground: #ffffff;
+  --border: rgba(51, 41, 28, 0.12);
+  --input: transparent;
+  --input-background: #FDF6E8;
+  --switch-background: #DFF5F5;
+  --font-weight-medium: 700;
+  --font-weight-normal: 400;
+  --ring: #F2762E;
+  --chart-1: #F2762E;
+  --chart-2: #4BBFBF;
+  --chart-3: #F2CA50;
+  --chart-4: #578A44;
+  --chart-5: #D93A3A;
+  --radius: 1rem;
+  --sidebar: #FDF6E8;
+  --sidebar-foreground: #33291C;
+  --sidebar-primary: #F2762E;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #DFF5F5;
+  --sidebar-accent-foreground: #1F8585;
+  --sidebar-border: rgba(51, 41, 28, 0.12);
+  --sidebar-ring: #F2762E;
+}
+
+.dark {
+  --background: #33291C;
+  --foreground: #FDF6E8;
+  --card: #3d3120;
+  --card-foreground: #FDF6E8;
+  --popover: #33291C;
+  --popover-foreground: #FDF6E8;
+  --primary: #F2762E;
+  --primary-foreground: #ffffff;
+  --secondary: #1F8585;
+  --secondary-foreground: #FDF6E8;
+  --muted: #4a3c28;
+  --muted-foreground: #C9BBA0;
+  --accent: #4a3c28;
+  --accent-foreground: #F2CA50;
+  --destructive: #D93A3A;
+  --destructive-foreground: #FDF6E8;
+  --border: rgba(253, 246, 232, 0.12);
+  --input: rgba(253, 246, 232, 0.12);
+  --ring: #F2762E;
+  --font-weight-medium: 700;
+  --font-weight-normal: 400;
+  --chart-1: #F2762E;
+  --chart-2: #4BBFBF;
+  --chart-3: #F2CA50;
+  --chart-4: #578A44;
+  --chart-5: #D93A3A;
+  --sidebar: #33291C;
+  --sidebar-foreground: #FDF6E8;
+  --sidebar-primary: #F2762E;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #4a3c28;
+  --sidebar-accent-foreground: #F2CA50;
+  --sidebar-border: rgba(253, 246, 232, 0.12);
+  --sidebar-ring: #F2762E;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: 'Nunito Sans', sans-serif;
+  --font-display: 'Nunito', sans-serif;
+  --font-marca: 'Manrope', sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Nunito Sans', sans-serif;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    line-height: 1.5;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    line-height: 1.5;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: 800;
+    line-height: 1.5;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: 700;
+    line-height: 1.5;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: 800;
+    line-height: 1.5;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
+
+/* Pulso en tamaño (sin cambio de color) — invita a tocar un término clickeable. */
+@keyframes euremaPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.eurema-pulse {
+  animation: euremaPulse 1.3s ease-in-out infinite;
+}
