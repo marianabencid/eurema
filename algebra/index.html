@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EUREMA — Álgebra</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#FDF6E8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ====== Tokens EUREMA v1.2 "Ginkgo" ====== */
+  :root{
+    --naranja:#F2762E; --naranja-deep:#C15A1C;
+    --turquesa:#4BBFBF; --turquesa-profundo:#1F8585;
+    --dorado:#F2CA50; --dorado-text:#D9A825;
+    --tinta:#33291C; --crema:#FDF6E8; --surface:#FFFFFF;
+    --line:rgba(51,41,28,0.12); --muted:#8C7F63; --progress-track:#F0E2C4;
+    --font-marca:'Manrope',sans-serif; --font-display:'Nunito',sans-serif; --font-body:'Nunito Sans',sans-serif;
+    --frame-w:560px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--crema);color:var(--tinta);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+  .frame{max-width:var(--frame-w);margin:0 auto;min-height:100vh;background:var(--crema);padding-bottom:8px}
+
+  /* ---------- Cabecera ---------- */
+  .head{padding:22px 24px 26px}
+  .back{display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;font-family:var(--font-marca);font-weight:700;
+    font-size:12.5px;letter-spacing:.04em;color:var(--turquesa-profundo);text-decoration:none}
+  .back:hover{text-decoration:underline}
+  .badge{display:flex;align-items:center;gap:9px;margin-bottom:28px;flex-wrap:wrap}
+  .badge-icon{width:20px;height:20px;flex-shrink:0}
+  .badge-word{font-family:var(--font-marca);font-weight:800;font-size:11.5px;letter-spacing:.2em;color:var(--tinta)}
+  .badge-tag{font-family:var(--font-marca);font-weight:600;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--turquesa-profundo);
+    padding-left:9px;border-left:1px solid var(--line)}
+  h1{font-family:var(--font-display);font-weight:900;font-size:clamp(32px,8vw,40px);line-height:1;margin:0 0 10px}
+  .lede{font-size:15px;line-height:1.5;color:var(--muted);margin:0;max-width:34ch;text-wrap:pretty}
+
+  .meter{display:flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--font-marca);font-weight:600;
+    font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .pips{display:flex;gap:3px}
+  .pip{width:12px;height:5px;border-radius:999px;background:var(--progress-track);transition:background .4s ease}
+  .pip.on{background:var(--naranja)}
+
+  /* ---------- Franjas ---------- */
+  .band{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;background:transparent;
+    padding:17px 24px;border-bottom:1px solid var(--line);color:var(--tinta);font:inherit;cursor:pointer;
+    transition:background .18s ease,padding .18s ease,color .18s ease}
+  .band:last-of-type{border-bottom:0}
+  .band[disabled]{cursor:default}
+  .band.done{border-bottom-color:rgba(51,41,28,.07)}
+  .band:hover,.band:focus-visible{padding-left:32px}
+  .band:focus-visible{outline:2px solid var(--tinta);outline-offset:-2px}
+  .band-num{font-family:var(--font-marca);font-weight:800;font-size:11px;opacity:.55;width:22px;flex-shrink:0}
+  .band-name{flex:1;font-family:var(--font-display);font-weight:900;font-size:15.5px;line-height:1.25;min-width:0}
+  .band-arrow{font-family:var(--font-marca);font-weight:800;font-size:16px;opacity:.45;flex-shrink:0}
+  .band.done .band-arrow,.band.next .band-arrow{opacity:1}
+  .band.next .band-arrow{animation:nudge 1.5s ease-in-out infinite}
+  @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+
+  /* ---------- Marca de agua ---------- */
+  .watermark{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;
+    padding:36px 24px 40px}
+  .wm-ghost{position:absolute;top:50%;left:50%;width:88px;height:88px;transform:translate(-50%,-50%);
+    opacity:.09;pointer-events:none}
+  .wm-word{position:relative;font-family:var(--font-marca);font-weight:800;font-size:11px;letter-spacing:.24em;color:var(--tinta);line-height:1}
+  .wm-tag{position:relative;font-family:var(--font-marca);font-weight:600;font-size:8px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--turquesa-profundo);line-height:1}
+
+  @media (min-width:640px){ .head{padding:48px 30px 30px} .band{padding:19px 30px} .band:hover,.band:focus-visible{padding-left:38px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <div class="head">
+    <a class="back" href="../"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>Volver al mundo</a>
+    <div class="badge">
+      <svg class="badge-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10.6" y1="53.8" x2="54.9" y2="20.7" stroke="#4BBFBF" stroke-width="2.75" stroke-linecap="round" opacity="0.25"/>
+        <rect x="12" y="44" width="9.9" height="9.9" fill="#4BBFBF" opacity="0.35" transform="rotate(45 17 49)"/>
+        <rect x="26.5" y="29.5" width="13.9" height="13.9" fill="#4BBFBF" opacity="0.65" transform="rotate(45 33.5 36.5)"/>
+        <rect x="39.5" y="16.5" width="17.9" height="17.9" fill="#F2CA50" transform="rotate(45 48.5 25.5)"/>
+      </svg>
+      <span class="badge-word">EUREMA</span>
+      <span class="badge-tag">Where every concept clicks</span>
+    </div>
+    <h1>Álgebra</h1>
+    <p class="lede">8 paradas. Sigue el camino para dominar el álgebra.</p>
+    <div class="meter"><span class="pips" id="pips"></span><span id="meter-label"></span></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="watermark">
+    <svg class="wm-ghost" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10.6" y1="53.8" x2="54.9" y2="20.7" stroke="#33291C" stroke-width="2.75" stroke-linecap="round" opacity="0.4"/>
+      <rect x="12" y="44" width="9.9" height="9.9" fill="#33291C" opacity="0.5" transform="rotate(45 17 49)"/>
+      <rect x="26.5" y="29.5" width="13.9" height="13.9" fill="#33291C" opacity="0.75" transform="rotate(45 33.5 36.5)"/>
+      <rect x="39.5" y="16.5" width="17.9" height="17.9" fill="#33291C" transform="rotate(45 48.5 25.5)"/>
+    </svg>
+    <div class="wm-tag">Chasing curiosity</div>
+  </div>
+
+</div>
+
+<script>
+/* Cada herramienta vive en su propia carpeta dentro de /algebra/. Pega la ruta en "url"
+   (el comentario de cada fila sugiere la carpeta). Ej.: url:'factorizacion/'.
+   "hecho: true" pinta la franja como completada. */
+const TOOLS = [
+  { name:'Introducción al álgebra',        url:null, hecho:false },  // 'introduccion/'
+  { name:'Valor numérico',                 url:'valor-numerico/', hecho:false },  // 'valor-numerico/'
+  { name:'Operaciones algebraicas (suma, resta, multiplicación y división, potenciación y radicación)', url:null, hecho:false },  // 'operaciones/'
+  { name:'Productos notables',             url:null, hecho:false },  // 'productos-notables/'
+  { name:'Factorización',                  url:'factorizacion/', hecho:false },  // 'factorizacion/'
+  { name:'Fracciones algebraicas',         url:null, hecho:false },  // 'fracciones/'
+  { name:'Ecuaciones de primer grado',     url:null, hecho:false },  // 'ecuaciones-primer-grado/'
+  { name:'Sistema de ecuaciones',          url:'sistema-ecuaciones/', hecho:false },  // 'sistema-ecuaciones/'
+];
+
+/* Degradado cálido: dorado -> naranja profundo, un paso por parada. */
+const RAMPA = ['#F5D77A','#F3CF63','#F2CA50','#F4B244','#F58E33','#F2762E','#D96324','#C15A1C'];
+const CREMA_DESDE = 6;  // de aquí en adelante el texto va en crema
+
+/* Demo: ?hechas=7 fuerza el estado de avance sin tocar los datos. */
+const forz = new URLSearchParams(location.search).get('hechas');
+if (forz !== null) TOOLS.forEach((t,i) => { t.hecho = i < Number(forz); });
+
+const hechas = TOOLS.filter(t => t.hecho).length;
+const siguiente = TOOLS.findIndex(t => !t.hecho); // -1 si todas están hechas
+
+document.getElementById('list').innerHTML = TOOLS.map((t,i) => {
+  // La primera siempre se muestra pintada: es la invitación a empezar.
+  const pintada = t.hecho || i === 0;
+  const esSig = i === siguiente;
+  const fondo = pintada ? `background:${RAMPA[i]};` : '';
+  const texto = pintada && i >= CREMA_DESDE ? 'color:var(--crema);' : '';
+  const tag = t.url ? 'a' : 'button';
+  const attrs = t.url ? `href="${t.url}"` : 'type="button"';
+  return `<${tag} class="band${pintada?' done':''}${esSig?' next':''}" ${attrs}
+      style="${fondo}${texto}text-decoration:none"
+      onmouseover="if(!this.classList.contains('done'))this.style.background='${RAMPA[i]}'${i>=CREMA_DESDE?",this.style.color='var(--crema)'":''}"
+      onmouseout="if(!this.classList.contains('done'))this.style.background='',this.style.color=''">
+      <span class="band-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="band-name">${t.name}</span>
+      <span class="band-arrow">&rarr;</span>
+    </${tag}>`;
+}).join('');
+
+document.getElementById('pips').innerHTML =
+  TOOLS.map((t,i) => `<span class="pip${(t.hecho||(hechas===0&&i===0))?' on':''}"></span>`).join('');
+document.getElementById('meter-label').textContent = `${hechas}/${TOOLS.length} completadas`;
+</script>
+</body>
+</html>
