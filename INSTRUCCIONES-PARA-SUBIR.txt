@@ -1,0 +1,27 @@
+EUREMA - PUBLICAR AHORA SIN GITHUB (Windows)
+
+IMPORTANTE: No arrastres el ZIP directamente a Netlify Drop. Las herramientas de Algebra son proyectos React/Vite y primero necesitan compilarse.
+
+1. Descarga y extrae todo el ZIP en una carpeta de tu computadora.
+2. Instala Node.js LTS si todavía no lo tienes: https://nodejs.org/
+3. Dentro de la carpeta extraída, haz doble clic en COMPILAR-WINDOWS.bat.
+4. Espera a que termine. La primera vez puede tardar porque descargará dependencias.
+5. Si aparece el mensaje LISTO, abre https://app.netlify.com/drop
+6. Arrastra SOLAMENTE la carpeta _site (no el ZIP ni la carpeta principal) al área de Netlify Drop.
+7. Netlify publicará el sitio y te dará una URL temporal para probarlo.
+
+Si el .bat muestra un error, no subas la carpeta _site incompleta. Envíame una captura del error.
+
+RUTAS ESPERADAS
+/                                  Mundo principal
+/algebra/                          Índice de Álgebra
+/algebra/valor-numerico/
+/algebra/sistema-ecuaciones/
+/algebra/factorizacion/
+/geometria/                        Índice de Geometría
+/geometria/hiperbola/
+/geometria/elipse/                 Provisional, falta el ZIP original
+/geometria/recta/                  Provisional, falta el ZIP original
+/geometria/lineas-notables/        Provisional, falta el ZIP original
+
+Este paquete no contiene todavía los ZIP de Elipse, Recta ni Líneas notables. Esas páginas son provisionales.

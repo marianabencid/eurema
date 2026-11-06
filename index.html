@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#BFE6F5">
+<title>EUREMA — ¿Qué quieres aprender hoy?</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;800&family=Nunito:wght@800;900&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+  html,body{margin:0;background:#BFE6F5;font-family:'Nunito Sans',sans-serif;}
+  button{font-family:inherit;background:none;border:none;padding:0;}
+
+  .eu-page{ position:relative; min-height:100vh; width:100%; overflow:hidden; }
+
+  .eu-header{
+    position:absolute; top:5.5%; left:50%; transform:translateX(-50%); z-index:4;
+    text-align:center; max-width:560px; padding:0 20px;
+  }
+  .eu-brandmark{ display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px; }
+  .eu-wordmark{ font-family:'Manrope',sans-serif; font-weight:800; font-size:19px; letter-spacing:0.2em; color:#33291C; }
+  .eu-footer{
+    position:absolute; bottom:6%; left:50%; transform:translateX(-50%); z-index:4;
+    text-align:center;
+  }
+
+  .eu-world-svg{ pointer-events:none; }
+  .eu-hotspot{ pointer-events:auto; cursor:pointer; transition:filter .25s ease; }
+  .eu-hotspot:hover{ filter:brightness(1.06); }
+  .eu-hotspot:active{ filter:brightness(0.97); }
+  .eu-hotspot:focus{ outline:none; }
+  .eu-hotspot:focus-visible{ outline:2px solid rgba(43,33,24,0.4); outline-offset:6px; }
+
+  .eu-waypoints{ position:absolute; inset:0; z-index:3; pointer-events:none; }
+  .eu-waypoint{ position:absolute; transform:translate(-50%,-50%); animation:eu-float 5.5s ease-in-out infinite; pointer-events:auto; }
+  @keyframes eu-float{ 0%,100%{ transform:translate(-50%,-50%) translateY(0); } 50%{ transform:translate(-50%,-50%) translateY(-8px); } }
+
+  .eu-circle-btn{ cursor:pointer; position:relative; z-index:2; transition:transform .3s ease; display:block; }
+  .eu-circle-btn:hover{ transform:scale(1.1); }
+  .eu-waypoint.is-open .eu-circle-btn{ transform:scale(1.14); }
+  .eu-circle-btn:focus-visible{ outline:2px solid #2B2118; outline-offset:6px; }
+
+  .eu-glow-burst{ position:absolute; left:50%; top:50%; width:140px; height:140px; margin:-70px 0 0 -70px; border-radius:50%; filter:blur(22px); opacity:0; pointer-events:none; transition:opacity .35s ease; z-index:1; }
+  .eu-waypoint.is-open .eu-glow-burst{ opacity:0.45; }
+
+  .eu-label{
+    position:absolute; width:210px; z-index:5; text-align:center; pointer-events:none;
+  }
+  .eu-label h2{ font-family:'Nunito',sans-serif; font-weight:800; font-size:22px; margin:0 0 4px; color:#33291C; }
+  .eu-label p{ font-size:12.5px; line-height:1.4; color:rgba(43,33,24,0.78); margin:0 0 3px; }
+  .eu-label .go{ pointer-events:auto; cursor:pointer; font-size:12px; font-weight:700; }
+  .eu-label .go:hover{ text-decoration:underline; }
+
+  .eu-back{ display:inline-flex; align-items:center; gap:6px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.04em; color:#1F8585; cursor:pointer; margin-bottom:28px; background:none; border:none; padding:0; }
+
+  .eu-label *{ text-shadow:0 0 8px rgba(255,255,255,.95), 0 0 18px rgba(255,255,255,.8); }
+
+  .eu-spin-slow{ transform-box:fill-box; transform-origin:center; animation:eu-spin 20s linear infinite; }
+  .eu-spin-slower{ transform-box:fill-box; transform-origin:center; animation:eu-spin 40s linear infinite; }
+  @keyframes eu-spin{ to{ transform:rotate(360deg); } }
+  .eu-bob{ transform-box:fill-box; transform-origin:center; animation:eu-bob 4.2s ease-in-out infinite; }
+  @keyframes eu-bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  .eu-twinkle{ transform-box:fill-box; transform-origin:center; animation:eu-twinkle 3s ease-in-out infinite; }
+  @keyframes eu-twinkle{ 0%,100%{ opacity:.35; } 50%{ opacity:1; } }
+  .eu-drift{ animation:eu-drift 70s linear infinite; }
+  @keyframes eu-drift{ 0%{ transform:translateX(0); } 100%{ transform:translateX(1900px); } }
+  .eu-swing{ transform-box:fill-box; transform-origin:50% 0%; animation:eu-swing 3.2s ease-in-out infinite; }
+  @keyframes eu-swing{ 0%,100%{ transform:rotate(-8deg); } 50%{ transform:rotate(8deg); } }
+  .eu-rock{ transform-box:fill-box; transform-origin:50% 100%; animation:eu-rock 3.6s ease-in-out infinite; }
+  @keyframes eu-rock{ 0%,100%{ transform:rotate(-4deg) translateY(0); } 50%{ transform:rotate(4deg) translateY(-4px); } }
+  .eu-breathe{ transform-box:fill-box; transform-origin:50% 100%; animation:eu-breathe 5s ease-in-out infinite; }
+  @keyframes eu-breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+
+  .eu-carousel, .eu-bg{ display:none; }
+  .eu-drift-m{ animation:eu-drift-m 46s linear infinite; }
+  @keyframes eu-drift-m{ 0%{ transform:translateX(0); } 100%{ transform:translateX(620px); } }
+  .eu-hotspot-m{ cursor:pointer; }
+  .eu-hotspot-m:focus{ outline:none; }
+
+  @media (max-width:760px), (max-aspect-ratio:1/1){
+    :root{ --legend-h:calc(236px + env(safe-area-inset-bottom, 0px)); }
+    .eu-world-svg{ display:none !important; }
+    .eu-page{ background:#BFE6F5; }
+    .eu-page.is-world{ height:100vh; height:100dvh; min-height:0; }
+    .eu-header{ position:absolute; top:14px; left:0; right:0; transform:none; margin:0; max-width:none; padding:0 18px; z-index:6; }
+    .eu-header h1{ font-size:clamp(20px,5.6vw,30px) !important; margin:0 !important; }
+    .eu-header p{ display:none; }
+    .eu-brandmark{ margin-bottom:8px; }
+    .eu-waypoints, .eu-footer{ display:none; }
+
+    /* fondo fijo: no se desliza */
+    .eu-bg{ display:flex; flex-direction:column; position:absolute; inset:0; z-index:0;
+      background:linear-gradient(180deg,#8FD3EE 0%,#BFE6F5 55%,#E6F5FA 100%); }
+    .eu-bg-base{ flex:none; height:var(--legend-h); background:#E4DCBD; }
+
+    .eu-carousel{ display:flex; position:absolute; inset:0; z-index:2; overflow-x:auto; overflow-y:hidden;
+      scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .eu-carousel::-webkit-scrollbar{ display:none; }
+    .eu-panel{ flex:0 0 100%; height:100%; scroll-snap-align:start; scroll-snap-stop:always; display:flex; flex-direction:column;
+      position:relative; overflow:hidden; background:none; }
+    .eu-scene{ flex:1; min-height:0; position:relative; z-index:1; }
+    .eu-scene > svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+
+    .eu-legend{ position:relative; z-index:3; flex:none; height:var(--legend-h); box-sizing:border-box;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:10px 22px calc(14px + env(safe-area-inset-bottom, 0px)); text-align:center; background:#E4DCBD; }
+    .eu-legend::before{ content:""; position:absolute; left:0; right:0; top:-34px; height:34px; pointer-events:none; background:linear-gradient(180deg, rgba(228,220,189,0), #E4DCBD); }
+    .eu-legend-nav{ display:flex; align-items:center; justify-content:center; gap:14px; font-family:'Manrope',sans-serif; font-weight:700; font-size:12px; letter-spacing:.08em; color:rgba(51,41,28,.5); margin-bottom:6px; }
+    .eu-chev{ font-size:22px; line-height:1; opacity:.75; }
+    .eu-legend-region{ font-family:'Manrope',sans-serif; font-weight:700; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; margin-bottom:4px; }
+    .eu-legend-title{ font-family:'Nunito',sans-serif; font-weight:900; font-size:clamp(28px,8vw,42px); line-height:1.05; margin:0 0 6px; color:#33291C; }
+    .eu-legend-desc{ font-family:'Nunito Sans',sans-serif; font-size:14px; line-height:1.4; color:rgba(51,41,28,.68); margin:0 auto 12px; max-width:32ch; }
+    .eu-legend-go{ border:0; border-radius:999px; padding:11px 28px; font-family:'Nunito',sans-serif; font-weight:800; font-size:14px; color:#fff; cursor:pointer; }
+  }
+
+  /* ---- export estático ---- */
+  .eu-waypoint .eu-label{ display:none; }
+  .eu-waypoint.is-open .eu-label{ display:block; }
+  .eu-carousel{ overscroll-behavior-x:contain; }
+  .eu-soon{ position:fixed; inset:0; z-index:50; background:#FDF6E8; display:none; align-items:center; justify-content:center; text-align:center; padding:24px; }
+  .eu-soon.is-open{ display:flex; }
+  .eu-soon-title{ font-family:'Nunito',sans-serif; font-weight:900; font-size:32px; margin:0 0 8px; }
+  .eu-soon p{ font-family:'Nunito Sans',sans-serif; font-size:15px; line-height:1.5; color:rgba(51,41,28,.65); margin:0 auto; max-width:30ch; }
+  .eu-soon-back{ display:inline-flex; align-items:center; gap:6px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; letter-spacing:.04em; color:#1F8585; cursor:pointer; background:none; border:none; padding:0; margin-bottom:26px; }
+</style>
+</head>
+<body>
+<div class="eu-page is-world">
+
+
+  <!-- MUNDO: fondo a pantalla completa -->
+  <svg class="eu-world-svg" aria-hidden="true" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;">
+    <defs>
+      <linearGradient id="skyFlat" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="#8FD3EE"></stop>
+        <stop offset="60%" stop-color="#BFE6F5"></stop>
+        <stop offset="100%" stop-color="#E6F5FA"></stop>
+      </linearGradient>
+      <linearGradient id="groundFlat" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+        <stop offset="0%" stop-color="#E8E1C4"></stop>
+        <stop offset="100%" stop-color="#DAD1AA"></stop>
+      </linearGradient>
+      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+        <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+        <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+      </radialGradient>
+      <radialGradient id="cloudGrad" cx="34%" cy="24%" r="85%">
+        <stop offset="0%" stop-color="#FFFFFF"></stop>
+        <stop offset="55%" stop-color="#F3F8FB"></stop>
+        <stop offset="100%" stop-color="#C6DCE8"></stop>
+      </radialGradient>
+      <filter id="blurGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="10"></feGaussianBlur></filter>
+      <filter id="blurSoft" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="20"></feGaussianBlur></filter>
+    </defs>
+
+    <rect x="0" y="0" width="1600" height="900" fill="url(#skyFlat)"></rect>
+    <ellipse cx="800" cy="560" rx="1000" ry="220" fill="#FFE9C4" opacity="0.18"></ellipse>
+
+    <!-- sol, nubes y pájaros: elementos genéricos de cielo, no ligados a zonas -->
+    <circle cx="1230" cy="430" r="50" fill="url(#sunGlow)"></circle>
+    <circle cx="1230" cy="430" r="26" fill="#FFB870" opacity="0.95"></circle>
+
+    <!-- nubes planas 2D, cada una con un símbolo matemático translúcido flotando dentro -->
+    <g transform="translate(-150,130)">
+      <g class="eu-drift" style="animation-delay:0s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,86) scale(0.9)">
+      <g class="eu-drift" style="animation-delay:-8.75s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,160) scale(1.1)">
+      <g class="eu-drift" style="animation-delay:-17.5s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,74) scale(0.85)">
+      <g class="eu-drift" style="animation-delay:-26.25s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,236) scale(0.65)">
+      <g class="eu-drift" style="animation-delay:-35s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,196) scale(0.95)">
+      <g class="eu-drift" style="animation-delay:-43.75s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,200) scale(0.75)">
+      <g class="eu-drift" style="animation-delay:-52.5s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <g transform="translate(-150,108) scale(1.05)">
+      <g class="eu-drift" style="animation-delay:-61.25s;">
+        <ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse>
+        <ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse>
+        <circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle>
+        <circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle>
+        <circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle>
+      </g>
+    </g>
+
+    <!-- villa griega lejana: recorre todo el horizonte, detrás de todo el mundo -->
+    <path d="M-60,420 Q120,388 300,408 T680,398 T1040,412 T1400,400 T1660,414 L1660,450 L-60,450 Z" fill="#9FBFD1" opacity="0.42"></path>
+
+    <g fill="#9FBFD1" opacity="0.42">
+      <!-- ciprés -->
+      <path d="M-30,420 C-36,398 -32,368 -26,352 C-20,368 -16,398 -22,420 Z"></path>
+
+      <!-- casita -->
+      <g transform="translate(70,404)">
+        <rect x="-14" y="10" width="28" height="14"></rect>
+        <path d="M-17,10 L0,-6 L17,10 Z"></path>
+      </g>
+
+      <!-- templo -->
+      <g transform="translate(200,392)">
+        <rect x="-22" y="20" width="44" height="10"></rect>
+        <path d="M-26,20 L0,0 L26,20 Z"></path>
+        <rect x="-16" y="6" width="3" height="14"></rect>
+        <rect x="-6" y="6" width="3" height="14"></rect>
+        <rect x="4" y="6" width="3" height="14"></rect>
+        <rect x="13" y="6" width="3" height="14"></rect>
+      </g>
+
+      <!-- casita + ciprés -->
+      <g transform="translate(360,406)">
+        <rect x="-12" y="8" width="24" height="12"></rect>
+        <path d="M-15,8 L0,-6 L15,8 Z"></path>
+      </g>
+      <path d="M400,420 C395,400 398,374 403,360 C408,374 411,400 406,420 Z"></path>
+
+      <!-- templo pequeño -->
+      <g transform="translate(520,398)">
+        <rect x="-18" y="16" width="36" height="9"></rect>
+        <path d="M-21,16 L0,0 L21,16 Z"></path>
+        <rect x="-13" y="5" width="3" height="11"></rect>
+        <rect x="-3" y="5" width="3" height="11"></rect>
+        <rect x="7" y="5" width="3" height="11"></rect>
+      </g>
+
+      <!-- rotonda: pieza focal, más alta -->
+      <g transform="translate(760,368)">
+        <rect x="-30" y="40" width="60" height="13"></rect>
+        <path d="M-32,10 A32,10 0 0 1 32,10 L32,36 A32,10 0 0 1 -32,36 Z"></path>
+        <ellipse cx="0" cy="10" rx="32" ry="10"></ellipse>
+        <path d="M-7,-26 Q0,-36 7,-26 L7,10 L-7,10 Z"></path>
+        <rect x="-24" y="17" width="3" height="19"></rect>
+        <rect x="-12" y="17" width="3" height="19"></rect>
+        <rect x="0" y="17" width="3" height="19"></rect>
+        <rect x="12" y="17" width="3" height="19"></rect>
+        <rect x="22" y="17" width="3" height="19"></rect>
+      </g>
+
+      <!-- casitas -->
+      <g transform="translate(930,410)">
+        <rect x="-13" y="9" width="26" height="13"></rect>
+        <path d="M-16,9 L0,-5 L16,9 Z"></path>
+      </g>
+      <g transform="translate(970,406)">
+        <rect x="-10" y="10" width="20" height="10"></rect>
+        <path d="M-12,10 L0,-2 L12,10 Z"></path>
+      </g>
+
+      <!-- templo -->
+      <g transform="translate(1100,396)">
+        <rect x="-20" y="18" width="40" height="9"></rect>
+        <path d="M-23,18 L0,0 L23,18 Z"></path>
+        <rect x="-14" y="5" width="3" height="13"></rect>
+        <rect x="-4" y="5" width="3" height="13"></rect>
+        <rect x="6" y="5" width="3" height="13"></rect>
+      </g>
+
+      <!-- casita + ciprés -->
+      <g transform="translate(1260,408)">
+        <rect x="-12" y="8" width="24" height="12"></rect>
+        <path d="M-15,8 L0,-6 L15,8 Z"></path>
+      </g>
+      <path d="M1300,420 C1295,400 1298,374 1303,360 C1308,374 1311,400 1306,420 Z"></path>
+
+      <!-- ciprés final -->
+      <path d="M1470,418 C1464,396 1468,366 1474,350 C1480,366 1484,396 1478,418 Z"></path>
+
+      <!-- templo cerca del borde -->
+      <g transform="translate(1580,400)">
+        <rect x="-16" y="14" width="32" height="8"></rect>
+        <path d="M-18,14 L0,0 L18,14 Z"></path>
+        <rect x="-11" y="4" width="2.5" height="10"></rect>
+        <rect x="-2" y="4" width="2.5" height="10"></rect>
+        <rect x="7" y="4" width="2.5" height="10"></rect>
+      </g>
+    </g>
+
+    <g stroke="#2B2118" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round">
+      <path d="M330,150 C338,144 348,144 354,150 M356,158 C364,152 374,152 380,158"></path>
+      <path d="M760,190 C768,184 778,184 784,190 M786,198 C794,192 804,192 810,198"></path>
+      <path d="M1150,230 C1158,224 1168,224 1174,230"></path>
+    </g>
+
+    <!-- suelo neutro compartido -->
+    <path d="M0,560 C100,545 200,590 280,575 C340,555 380,530 400,515 C460,495 500,520 533,530 C580,552 630,522 667,500 C710,482 760,494 800,510 C860,532 900,548 933,522 C980,495 1030,518 1066,540 C1110,575 1150,596 1200,630 C1250,664 1290,672 1333,636 C1380,598 1420,576 1466,554 C1510,536 1560,544 1600,532 L1600,900 L0,900 Z" fill="url(#groundFlat)"></path>
+
+    <!-- ===================== BOSQUE DE LOS NÚMEROS (verde) ===================== -->
+    <g class="eu-hotspot" transform="translate(85,0)" data-pick="arit" role="button" tabindex="0" aria-label="Aritmética — Bosque de los Números">
+      <ellipse cx="130" cy="700" rx="130" ry="90" fill="#8FBE7A" opacity="0.55"></ellipse>
+      <ellipse cx="60" cy="740" rx="100" ry="60" fill="#6FA35C" opacity="0.4"></ellipse>
+
+      <g stroke="#3F6B32" stroke-width="1.4" fill="none" opacity="0.55">
+        <line x1="-40" y1="640" x2="-32" y2="622"></line><line x1="-10" y1="646" x2="-2" y2="628"></line><line x1="20" y1="642" x2="28" y2="624"></line>
+        <line x1="50" y1="648" x2="58" y2="630"></line><line x1="80" y1="640" x2="88" y2="622"></line><line x1="110" y1="646" x2="118" y2="628"></line>
+        <line x1="140" y1="642" x2="148" y2="624"></line><line x1="170" y1="648" x2="178" y2="630"></line><line x1="200" y1="640" x2="208" y2="622"></line>
+        <line x1="230" y1="646" x2="238" y2="628"></line>
+      </g>
+
+      <g transform="translate(60,610)">
+        <path d="M0,60 L0,10" stroke="#6B4A2E" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0,10 C-42,-6 -48,-50 -20,-86 C6,-104 36,-96 44,-64 C52,-30 30,10 0,10 Z" fill="#5C9A4C"></path>
+        <path d="M-6,-8 C-28,-20 -32,-50 -12,-72" stroke="#A9CE95" stroke-width="2" fill="none" opacity="0.6"></path>
+        <path d="M16,-12 C32,-28 32,-56 16,-78" stroke="#3F6B32" stroke-width="2" fill="none" opacity="0.5"></path>
+        <g transform="translate(16,-66)">
+          <g class="eu-swing">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="#6B4A2E" stroke-width="1.5"></line>
+            <circle cx="0" cy="13" r="6.5" fill="#D9432E"></circle>
+            <circle cx="-2" cy="11" r="1.8" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(-16,-44)">
+          <g class="eu-swing" style="animation-delay:.6s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5.5" fill="#D9432E"></circle>
+            <circle cx="-1.6" cy="9.5" r="1.5" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(28,-28)">
+          <g class="eu-swing" style="animation-delay:1.3s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5.5" fill="#D9432E"></circle>
+            <circle cx="-1.6" cy="9.5" r="1.5" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(-2,-86)">
+          <g class="eu-swing" style="animation-delay:2s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5" fill="#D9432E"></circle>
+            <circle cx="-1.5" cy="9.5" r="1.3" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(140,650)" opacity="0.9">
+        <path d="M0,48 L0,6" stroke="#6B4A2E" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M0,6 C-32,-6 -36,-40 -14,-64 C4,-78 28,-70 34,-46 C40,-20 26,6 0,6 Z" fill="#74A65D"></path>
+      </g>
+      <g transform="translate(-10,665)" opacity="0.72">
+        <path d="M0,40 L0,6" stroke="#6B4A2E" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M0,6 C-24,-4 -28,-32 -10,-52 C4,-62 22,-56 26,-36 C30,-16 20,6 0,6 Z" fill="#8FBE7A"></path>
+      </g>
+
+      <g class="eu-bob" style="animation-delay:.3s;"><path d="M480,540 C468,516 472,494 480,482 C488,494 492,516 480,540 Z" fill="#74A65D" opacity="0.75"></path></g>
+      <g class="eu-bob" style="animation-delay:1.5s;"><path d="M250,510 C242,494 244,478 250,470 C256,478 258,494 250,510 Z" fill="#8FBE7A" opacity="0.7"></path></g>
+      <circle class="eu-bob" style="animation-delay:.8s;" cx="330" cy="560" r="3" fill="#4A7A3B"></circle>
+    </g>
+
+    <!-- ===================== TORRE DE LAS INCÓGNITAS (dorado) ===================== -->
+    <g class="eu-hotspot" transform="translate(400,560)" data-pick="alg" role="button" tabindex="0" aria-label="Álgebra — Torre de las Incógnitas">
+      <ellipse cx="0" cy="26" rx="130" ry="42" fill="#F2CA50" opacity="0.35"></ellipse>
+      <ellipse cx="0" cy="8" rx="76" ry="10" fill="#000" opacity="0.1"></ellipse>
+
+      <rect x="-50" y="-6" width="100" height="18" fill="#E0B64A"></rect>
+      <g stroke="#8C6A12" stroke-width="1" opacity="0.55"><line x1="-42" y1="3" x2="42" y2="3"></line><line x1="-30" y1="-3" x2="-30" y2="9"></line><line x1="0" y1="-3" x2="0" y2="9"></line><line x1="30" y1="-3" x2="30" y2="9"></line></g>
+
+      <rect x="-30" y="-198" width="60" height="196" rx="4" fill="#F2CA50"></rect>
+      <g stroke="#C9922E" stroke-width="1.6" opacity="0.6">
+        <line x1="-18" y1="-194" x2="-18" y2="-6"></line><line x1="-6" y1="-194" x2="-6" y2="-6"></line>
+        <line x1="6" y1="-194" x2="6" y2="-6"></line><line x1="18" y1="-194" x2="18" y2="-6"></line>
+      </g>
+      <path d="M14,-138 C24,-128 20,-98 8,-88" stroke="#8C6A12" stroke-width="1.2" fill="none" opacity="0.5"></path>
+
+      <g fill="#8C6A12" opacity="0.32" font-family="Fraunces, serif" font-weight="600" font-size="15" text-anchor="middle">
+        <text x="0" y="-168">x</text>
+        <text x="0" y="-128">y</text>
+        <text x="0" y="-88">z</text>
+        <text x="0" y="-48">²</text>
+      </g>
+
+      <path d="M-14,-88 C-30,-82 -34,-62 -22,-48 C-30,-38 -20,-24 -8,-28" stroke="#74A65D" stroke-width="2" fill="none" opacity="0.55"></path>
+      <circle cx="-22" cy="-48" r="3" fill="#74A65D" opacity="0.5"></circle>
+
+      <rect x="-40" y="-210" width="80" height="16" rx="3" fill="#FBE6A8"></rect>
+      <path d="M-30,-210 L0,-248 L30,-210 Z" fill="#F2CA50"></path>
+      <circle cx="0" cy="-226" r="7" fill="none" stroke="#C9922E" stroke-width="1.6" opacity="0.6"></circle>
+
+      <g class="eu-bob" style="animation-delay:.5s;" transform="translate(-76,-140) rotate(-18)"><rect x="-14" y="-8" width="28" height="16" rx="3" fill="#FBE6A8" opacity="0.75"></rect></g>
+      <g class="eu-bob" style="animation-delay:1.5s;" transform="translate(80,-90) rotate(14)"><rect x="-11" y="-7" width="22" height="14" rx="3" fill="#E0B64A" opacity="0.65"></rect></g>
+      <g class="eu-bob" style="animation-delay:2.2s;" transform="translate(0,-266)">
+        <path d="M0,0 C-14,-6 -22,2 -20,12 C-14,8 -8,10 0,6 C8,10 14,8 20,12 C22,2 14,-6 0,0 Z" fill="none" stroke="#74A65D" stroke-width="1.6" opacity="0.7"></path>
+      </g>
+    </g>
+
+    <!-- ===================== ÓRBITAS DEL COSMOS (bronce/durazno) ===================== -->
+    <g class="eu-hotspot" transform="translate(667,560)" data-pick="fis" role="button" tabindex="0" aria-label="Física — Órbitas del Cosmos">
+      <ellipse cx="0" cy="66" rx="130" ry="45" fill="#F2AF5C" opacity="0.3"></ellipse>
+      <path d="M-30,60 L0,0 L30,60 M0,0 L0,66" stroke="#C97F2E" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.75"></path>
+
+      <circle cx="0" cy="-30" r="30" fill="url(#sunGlow)" opacity="0.55"></circle>
+      <circle cx="0" cy="-30" r="10" fill="#FBE0BE"></circle>
+      <circle cx="0" cy="-30" r="10" fill="none" stroke="#C97F2E" stroke-width="1.4"></circle>
+
+      <g class="eu-spin-slow">
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#F2AF5C" stroke-width="2"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#C97F2E" stroke-width="1" stroke-dasharray="1 6" opacity="0.6"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#F7CE9A" stroke-width="1.2" transform="rotate(58 0 -30)" opacity="0.75"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#C97F2E" stroke-width="1.2" transform="rotate(116 0 -30)" opacity="0.85"></ellipse>
+      </g>
+
+      <ellipse cx="0" cy="-30" rx="24" ry="9" fill="none" stroke="#C97F2E" stroke-width="1" stroke-dasharray="1 6" opacity="0.55"></ellipse>
+      <circle r="4" fill="#C97F2E">
+        <animateMotion dur="5.5s" repeatCount="indefinite" path="M24,-30 A24,9 0 1 1 -24,-30 A24,9 0 1 1 24,-30"></animateMotion>
+      </circle>
+    </g>
+
+    <!-- ===================== GALAXIA DEL INFINITO (oro antiguo) ===================== -->
+    <g class="eu-hotspot" transform="translate(890,470)" data-pick="calc" role="button" tabindex="0" aria-label="Cálculo — Galaxia del Infinito">
+      <ellipse cx="0" cy="70" rx="110" ry="38" fill="#C99A1E" opacity="0.3"></ellipse>
+      <rect x="-6" y="12" width="12" height="58" fill="#8C6A12" opacity="0.5"></rect>
+
+      <g class="eu-spin-slower">
+        <circle cx="0" cy="0" r="16" fill="url(#sunGlow)" opacity="0.75"></circle>
+        <path d="M0,0 A9,9 0 1 1 -1,9 A17,17 0 1 1 20,-14 A30,30 0 1 1 -34,27 A46,46 0 1 1 56,-42" fill="none" stroke="#C99A1E" stroke-width="5" stroke-linecap="round" opacity="0.7"></path>
+        <path d="M0,0 A9,9 0 1 1 -1,9 A17,17 0 1 1 20,-14 A30,30 0 1 1 -34,27 A46,46 0 1 1 56,-42" fill="none" stroke="#8C6A12" stroke-width="2" stroke-linecap="round" opacity="0.5" transform="translate(3,3)"></path>
+      </g>
+
+      <g class="eu-twinkle" style="animation-delay:.1s;"><circle cx="-72" cy="-58" r="2.2" fill="#E8C570"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:.9s;"><circle cx="70" cy="-70" r="1.8" fill="#C99A1E"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:1.5s;"><circle cx="30" cy="-96" r="2" fill="#E8C570"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:.5s;"><circle cx="-40" cy="-88" r="1.6" fill="#C99A1E"></circle></g>
+    </g>
+
+    <!-- ===================== COSTA DE LAS ONDAS (azul-teal) ===================== -->
+    <g class="eu-hotspot" transform="translate(360,-90) scale(0.65,1)" data-pick="trig" role="button" tabindex="0" aria-label="Trigonometría — Costa de las Ondas">
+      <ellipse cx="1278" cy="669" rx="195" ry="85" fill="#4BBFBF" opacity="0.4"></ellipse>
+
+      <path d="M1066,620 C1120,600 1170,640 1220,618 S1310,596 1360,618 S1440,640 1490,620" stroke="#2E8F8F" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.55"></path>
+      <path d="M1066,654 C1120,634 1170,674 1220,652 S1310,630 1360,652 S1440,674 1490,654" stroke="#4BBFBF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"></path>
+      <path d="M1066,688 C1120,668 1170,708 1220,686 S1310,664 1360,686 S1440,708 1490,688" stroke="#9EE0E0" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.45"></path>
+      <path d="M1066,722 C1120,704 1170,740 1220,720 S1310,700 1360,720 S1440,740 1490,722" stroke="#2E8F8F" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.4"></path>
+      <g stroke="#FFFFFF" stroke-width="1.4" opacity="0.6"><line x1="1150" y1="638" x2="1160" y2="632"></line><line x1="1280" y1="646" x2="1290" y2="640"></line><line x1="1400" y1="632" x2="1410" y2="626"></line></g>
+
+      <g transform="translate(1230,630)">
+        <g class="eu-rock">
+          <path d="M-42,26 C-24,42 24,42 42,26 C30,40 -30,40 -42,26 Z" fill="#1D6E93"></path>
+          <path d="M0,26 L0,-64" stroke="#2E8F8F" stroke-width="3"></path>
+          <path d="M0,-60 C-34,-48 -36,-14 0,10 Z" fill="#FFFFFF" opacity="0.92"></path>
+          <path d="M0,-60 C34,-48 36,-14 0,10 Z" fill="#FFFFFF" opacity="0.8"></path>
+          <path d="M-24,-25 L24,-25" stroke="#2E8F8F" stroke-width="1.4" opacity="0.5"></path>
+          <path d="M0,-64 L14,-58 L0,-52 Z" fill="#F2CA50"></path>
+        </g>
+        <ellipse cx="0" cy="34" rx="34" ry="5" fill="#0B2436" opacity="0.2"></ellipse>
+      </g>
+
+      <g class="eu-twinkle" style="animation-delay:.4s;"><circle cx="1120" cy="600" r="3" fill="#FFFFFF" opacity="0.85"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:1.2s;"><circle cx="1340" cy="590" r="2.4" fill="#FFFFFF" opacity="0.8"></circle></g>
+    </g>
+
+    <!-- ===================== MONTAÑAS DE LAS FORMAS (naranja) ===================== -->
+    <g class="eu-hotspot" transform="translate(1470,645) scale(0.5,1)" data-pick="geo" role="button" tabindex="0" aria-label="Geometría — Montañas de las Formas">
+      <g class="eu-breathe">
+      <path d="M-220,60 L-140,-70 L-70,-30 L20,-110 L100,60 Z" fill="#F7A374" opacity="0.5"></path>
+      <path d="M-60,60 L20,-130 L60,-90 L120,-160 L200,60 Z" fill="#F2762E"></path>
+      <path d="M40,-160 L52,-140 L28,-140 Z" fill="#FFFFFF" opacity="0.9"></path>
+      <path d="M20,-130 L60,-90 L-4,-90 Z" fill="#FFFFFF" opacity="0.85"></path>
+      <g stroke="#B5501A" stroke-width="1.6" opacity="0.5"><line x1="30" y1="-60" x2="46" y2="-72"></line><line x1="48" y1="-40" x2="64" y2="-54"></line><line x1="66" y1="-20" x2="82" y2="-34"></line><line x1="84" y1="0" x2="100" y2="-14"></line></g>
+      <path d="M20,-125 C0,-90 30,-40 10,20 C-4,20 -14,-30 4,-70" stroke="#B5501A" stroke-width="1.2" stroke-dasharray="2 6" fill="none" opacity="0.4"></path>
+      </g>
+
+      <ellipse cx="-40" cy="66" rx="260" ry="30" fill="#F2762E" opacity="0.3"></ellipse>
+
+      <g stroke="#B5501A" stroke-width="3" stroke-linecap="round" opacity="0.6">
+        <path d="M-170,60 L-170,20 M-182,32 L-158,32 M-186,44 L-154,44"></path>
+        <path d="M-120,64 L-120,28 M-130,38 L-110,38 M-133,50 L-107,50"></path>
+      </g>
+
+      <path d="M60,-190 C68,-196 78,-196 84,-190 M86,-178 C94,-184 104,-184 110,-178" stroke="#2B2118" stroke-width="1.6" fill="none" opacity="0.4"></path>
+    </g>
+
+    <!-- greca dorada al pie -->
+    <g opacity="0.4" stroke="#C9922E" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,880 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h30 v-16 h16 v16 h36"></path>
+    </g>
+    <line x1="0" y1="898" x2="1600" y2="898" stroke="#C9922E" stroke-width="1.4" opacity="0.3"></line>
+  </svg>
+
+  <!-- cabecera -->
+  <header class="eu-header">
+    <div class="eu-brandmark">
+      <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+        <line x1="14" y1="50" x2="50" y2="14" stroke="#4BBFBF" stroke-width="2.75" stroke-linecap="round" opacity="0.25"></line>
+        <path d="M20,39 L25,44 L20,49 L15,44 Z" fill="#4BBFBF" opacity="0.35"></path>
+        <path d="M30,27 L37,34 L30,41 L23,34 Z" fill="#4BBFBF" opacity="0.65"></path>
+        <path d="M42,13 L51,22 L42,31 L33,22 Z" fill="#F2CA50"></path>
+      </svg>
+      <span class="eu-wordmark">EUREMA</span>
+    </div>
+    <h1 style="font-family:'Nunito',sans-serif;font-weight:900;font-size:clamp(26px,3.6vw,42px);line-height:1.14;margin:0 0 10px;color:#33291C;">
+      Bienvenido a Eurema,<br>¿qué quieres <span style="color:#C9622D;">aprender</span> hoy?
+    </h1>
+    <p style="font-family:'Nunito Sans',sans-serif;font-size:15px;line-height:1.5;color:rgba(51,41,28,0.68);margin:0;">
+      Toca cada elemento y entra a su territorio.
+    </p>
+  </header>
+
+  <!-- INSIGNIAS: letras flotantes, sin círculo ni tarjeta -->
+  <div class="eu-waypoints">
+
+    <!-- Aritmética -->
+    <div class="eu-waypoint" id="wp-arit" style="left:9%;top:74.4%;animation-delay:.1s;">
+      <span class="eu-glow-burst" style="background:#74A65D;"></span>
+        <div class="eu-label" style="left:50%;top:52px;transform:translateX(-50%);">
+          <h2>Aritmética</h2>
+          <p>Números, sumas y las raíces de todo lo demás.</p>
+          <span class="go" data-go="arit" style="color:#4A7A3B;">Comenzar →</span>
+        </div>
+    </div>
+
+    <!-- Álgebra -->
+    <div class="eu-waypoint" id="wp-alg" style="left:25%;top:63.6%;animation-delay:1.2s;">
+      <span class="eu-glow-burst" style="background:#F2CA50;"></span>
+        <div class="eu-label" style="left:50%;top:52px;transform:translateX(-50%);">
+          <h2>Álgebra</h2>
+          <p>Ecuaciones y el arte de despejar lo desconocido.</p>
+          <span class="go" data-go="alg" style="color:#A67E1E;">Comenzar →</span>
+        </div>
+    </div>
+
+    <!-- Física -->
+    <div class="eu-waypoint" id="wp-fis" style="left:41.7%;top:69.6%;animation-delay:2.1s;">
+      <span class="eu-glow-burst" style="background:#F2AF5C;"></span>
+        <div class="eu-label" style="left:50%;top:52px;transform:translateX(-50%);">
+          <h2>Física</h2>
+          <p>Fuerzas, movimiento y las leyes del universo.</p>
+          <span class="go" data-go="fis" style="color:#C97F2E;">Comenzar →</span>
+        </div>
+    </div>
+
+    <!-- Cálculo -->
+    <div class="eu-waypoint" id="wp-calc" style="left:55.6%;top:60%;animation-delay:.7s;">
+      <span class="eu-glow-burst" style="background:#C99A1E;"></span>
+        <div class="eu-label" style="left:50%;top:52px;transform:translateX(-50%);">
+          <h2>Cálculo</h2>
+          <p>Cambio, límites y el infinito hecho manejable.</p>
+          <span class="go" data-go="calc" style="color:#8C6A12;">Comenzar →</span>
+        </div>
+    </div>
+
+    <!-- Trigonometría -->
+    <div class="eu-waypoint" id="wp-trig" style="left:72.5%;top:63.8%;animation-delay:1.8s;">
+      <span class="eu-glow-burst" style="background:#4BBFBF;"></span>
+        <div class="eu-label" style="right:0;top:52px;">
+          <h2>Trigonometría</h2>
+          <p>Ángulos y ondas que van y vuelven, como la marea.</p>
+          <span class="go" data-go="trig" style="color:#2E8F8F;">Comenzar →</span>
+        </div>
+    </div>
+
+    <!-- Geometría -->
+    <div class="eu-waypoint" id="wp-geo" style="left:93.1%;top:78.3%;animation-delay:.4s;">
+      <span class="eu-glow-burst" style="background:#F2762E;"></span>
+        <div class="eu-label" style="right:0;top:52px;">
+          <h2>Geometría</h2>
+          <p>Formas, espacio y las reglas que las gobiernan.</p>
+          <span class="go" data-go="geo" style="color:#B5501A;">Comenzar →</span>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- FONDO FIJO (móvil): cielo, sol, nubes, villa y tierra no se deslizan -->
+  <div class="eu-bg" aria-hidden="true">
+    <div class="eu-scene">
+      <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+        <circle cx="310" cy="176" r="48" fill="#FFE9A0" opacity="0.4"></circle>
+        <circle cx="310" cy="176" r="24" fill="#FFB870" opacity="0.95"></circle>
+        <g transform="translate(-110,150) scale(0.9)"><g class="eu-drift-m" style="animation-delay:-6s;"><ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse><ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse><circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle><circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle><circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle></g></g>
+        <g transform="translate(-110,236) scale(0.65)"><g class="eu-drift-m" style="animation-delay:-22s;"><ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse><ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse><circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle><circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle><circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle></g></g>
+        <g transform="translate(-110,90) scale(0.8)"><g class="eu-drift-m" style="animation-delay:-34s;"><ellipse cx="4" cy="22" rx="38" ry="9" fill="#6FA8C9" opacity="0.2"></ellipse><ellipse cx="0" cy="14" rx="46" ry="16" fill="#FFFFFF"></ellipse><circle cx="-24" cy="0" r="17" fill="#FFFFFF"></circle><circle cx="4" cy="-9" r="21" fill="#FFFFFF"></circle><circle cx="32" cy="2" r="15" fill="#FFFFFF"></circle></g></g>
+        <g fill="#9FBFD1" opacity="0.42">
+            <path d="M-300,422 Q-100,394 60,410 T330,400 T700,414 L700,480 L-300,480 Z"></path>
+            <path d="M-40,422 C-46,400 -42,370 -36,354 C-30,370 -26,400 -32,422 Z"></path>
+            <g transform="translate(42,406)"><rect x="-14" y="10" width="28" height="14"></rect><path d="M-17,10 L0,-6 L17,10 Z"></path></g>
+            <g transform="translate(112,394)"><rect x="-22" y="20" width="44" height="10"></rect><path d="M-26,20 L0,0 L26,20 Z"></path><rect x="-16" y="6" width="3" height="14"></rect><rect x="-6" y="6" width="3" height="14"></rect><rect x="4" y="6" width="3" height="14"></rect><rect x="13" y="6" width="3" height="14"></rect></g>
+            <g transform="translate(200,376) scale(.85)"><rect x="-30" y="40" width="60" height="13"></rect><path d="M-32,10 A32,10 0 0 1 32,10 L32,36 A32,10 0 0 1 -32,36 Z"></path><ellipse cx="0" cy="10" rx="32" ry="10"></ellipse><path d="M-7,-26 Q0,-36 7,-26 L7,10 L-7,10 Z"></path><rect x="-24" y="17" width="3" height="19"></rect><rect x="-12" y="17" width="3" height="19"></rect><rect x="0" y="17" width="3" height="19"></rect><rect x="12" y="17" width="3" height="19"></rect><rect x="22" y="17" width="3" height="19"></rect></g>
+            <g transform="translate(288,408)"><rect x="-13" y="9" width="26" height="13"></rect><path d="M-16,9 L0,-5 L16,9 Z"></path></g>
+            <g transform="translate(346,396)"><rect x="-20" y="18" width="40" height="9"></rect><path d="M-23,18 L0,0 L23,18 Z"></path><rect x="-14" y="5" width="3" height="13"></rect><rect x="-4" y="5" width="3" height="13"></rect><rect x="6" y="5" width="3" height="13"></rect></g>
+            <path d="M400,424 C394,402 398,372 404,356 C410,372 414,402 408,424 Z"></path>
+          </g>
+        <path d="M-300,464 C-120,448 60,472 200,456 S420,446 700,460 L700,900 L-300,900 Z" fill="#E4DCBD"></path>
+      </svg>
+    </div>
+    <div class="eu-bg-base"></div>
+  </div>
+
+  <!-- VERSIÓN MÓVIL / VERTICAL: un mundo por pantalla, swipe izquierda-derecha -->
+  <div class="eu-carousel">
+    <section class="eu-panel" aria-label="Álgebra">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="alg" role="button" tabindex="0" aria-label="Álgebra — Torre de las Incógnitas">
+            <g transform="translate(195,470) scale(1.0,1.0) translate(0,-20)">
+              
+      <ellipse cx="0" cy="26" rx="130" ry="42" fill="#F2CA50" opacity="0.35"></ellipse>
+      <ellipse cx="0" cy="8" rx="76" ry="10" fill="#000" opacity="0.1"></ellipse>
+
+      <rect x="-50" y="-6" width="100" height="18" fill="#E0B64A"></rect>
+      <g stroke="#8C6A12" stroke-width="1" opacity="0.55"><line x1="-42" y1="3" x2="42" y2="3"></line><line x1="-30" y1="-3" x2="-30" y2="9"></line><line x1="0" y1="-3" x2="0" y2="9"></line><line x1="30" y1="-3" x2="30" y2="9"></line></g>
+
+      <rect x="-30" y="-198" width="60" height="196" rx="4" fill="#F2CA50"></rect>
+      <g stroke="#C9922E" stroke-width="1.6" opacity="0.6">
+        <line x1="-18" y1="-194" x2="-18" y2="-6"></line><line x1="-6" y1="-194" x2="-6" y2="-6"></line>
+        <line x1="6" y1="-194" x2="6" y2="-6"></line><line x1="18" y1="-194" x2="18" y2="-6"></line>
+      </g>
+      <path d="M14,-138 C24,-128 20,-98 8,-88" stroke="#8C6A12" stroke-width="1.2" fill="none" opacity="0.5"></path>
+
+      <g fill="#8C6A12" opacity="0.32" font-family="Fraunces, serif" font-weight="600" font-size="15" text-anchor="middle">
+        <text x="0" y="-168">x</text>
+        <text x="0" y="-128">y</text>
+        <text x="0" y="-88">z</text>
+        <text x="0" y="-48">²</text>
+      </g>
+
+      <path d="M-14,-88 C-30,-82 -34,-62 -22,-48 C-30,-38 -20,-24 -8,-28" stroke="#74A65D" stroke-width="2" fill="none" opacity="0.55"></path>
+      <circle cx="-22" cy="-48" r="3" fill="#74A65D" opacity="0.5"></circle>
+
+      <rect x="-40" y="-210" width="80" height="16" rx="3" fill="#FBE6A8"></rect>
+      <path d="M-30,-210 L0,-248 L30,-210 Z" fill="#F2CA50"></path>
+      <circle cx="0" cy="-226" r="7" fill="none" stroke="#C9922E" stroke-width="1.6" opacity="0.6"></circle>
+
+      <g class="eu-bob" style="animation-delay:.5s;" transform="translate(-76,-140) rotate(-18)"><rect x="-14" y="-8" width="28" height="16" rx="3" fill="#FBE6A8" opacity="0.75"></rect></g>
+      <g class="eu-bob" style="animation-delay:1.5s;" transform="translate(80,-90) rotate(14)"><rect x="-11" y="-7" width="22" height="14" rx="3" fill="#E0B64A" opacity="0.65"></rect></g>
+      <g class="eu-bob" style="animation-delay:2.2s;" transform="translate(0,-266)">
+        <path d="M0,0 C-14,-6 -22,2 -20,12 C-14,8 -8,10 0,6 C8,10 14,8 20,12 C22,2 14,-6 0,0 Z" fill="none" stroke="#74A65D" stroke-width="1.6" opacity="0.7"></path>
+      </g>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:hidden;">‹</span><span>1 / 6</span><span class="eu-chev" style="visibility:visible;">›</span></div>
+        <div class="eu-legend-region" style="color:#A67E1E;">Torre de las Incógnitas</div>
+        <h2 class="eu-legend-title">Álgebra</h2>
+        <p class="eu-legend-desc">Ecuaciones y el arte de despejar lo desconocido.</p>
+        <button type="button" class="eu-legend-go" style="background:#A67E1E;" data-go="alg">Comenzar →</button>
+      </div>
+    </section>
+    <section class="eu-panel" aria-label="Aritmética">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="arit" role="button" tabindex="0" aria-label="Aritmética — Bosque de los Números">
+            <g transform="translate(195,470) scale(1.25,1.25) translate(-90,-700)">
+              
+      <ellipse cx="130" cy="700" rx="130" ry="56" fill="#8FBE7A" opacity="0.55"></ellipse>
+      <ellipse cx="60" cy="722" rx="100" ry="38" fill="#6FA35C" opacity="0.4"></ellipse>
+
+      <g stroke="#3F6B32" stroke-width="1.4" fill="none" opacity="0.55">
+        <line x1="-40" y1="640" x2="-32" y2="622"></line><line x1="-10" y1="646" x2="-2" y2="628"></line><line x1="20" y1="642" x2="28" y2="624"></line>
+        <line x1="50" y1="648" x2="58" y2="630"></line><line x1="80" y1="640" x2="88" y2="622"></line><line x1="110" y1="646" x2="118" y2="628"></line>
+        <line x1="140" y1="642" x2="148" y2="624"></line><line x1="170" y1="648" x2="178" y2="630"></line><line x1="200" y1="640" x2="208" y2="622"></line>
+        <line x1="230" y1="646" x2="238" y2="628"></line>
+      </g>
+
+      <g transform="translate(60,610)">
+        <path d="M0,60 L0,10" stroke="#6B4A2E" stroke-width="7" stroke-linecap="round"></path>
+        <path d="M0,10 C-42,-6 -48,-50 -20,-86 C6,-104 36,-96 44,-64 C52,-30 30,10 0,10 Z" fill="#5C9A4C"></path>
+        <path d="M-6,-8 C-28,-20 -32,-50 -12,-72" stroke="#A9CE95" stroke-width="2" fill="none" opacity="0.6"></path>
+        <path d="M16,-12 C32,-28 32,-56 16,-78" stroke="#3F6B32" stroke-width="2" fill="none" opacity="0.5"></path>
+        <g transform="translate(16,-66)">
+          <g class="eu-swing">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="#6B4A2E" stroke-width="1.5"></line>
+            <circle cx="0" cy="13" r="6.5" fill="#D9432E"></circle>
+            <circle cx="-2" cy="11" r="1.8" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(-16,-44)">
+          <g class="eu-swing" style="animation-delay:.6s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5.5" fill="#D9432E"></circle>
+            <circle cx="-1.6" cy="9.5" r="1.5" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(28,-28)">
+          <g class="eu-swing" style="animation-delay:1.3s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5.5" fill="#D9432E"></circle>
+            <circle cx="-1.6" cy="9.5" r="1.5" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+        <g transform="translate(-2,-86)">
+          <g class="eu-swing" style="animation-delay:2s;">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#6B4A2E" stroke-width="1.3"></line>
+            <circle cx="0" cy="11" r="5" fill="#D9432E"></circle>
+            <circle cx="-1.5" cy="9.5" r="1.3" fill="#FF8A6B" opacity="0.7"></circle>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(140,650)" opacity="0.9">
+        <path d="M0,48 L0,6" stroke="#6B4A2E" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M0,6 C-32,-6 -36,-40 -14,-64 C4,-78 28,-70 34,-46 C40,-20 26,6 0,6 Z" fill="#74A65D"></path>
+      </g>
+      <g transform="translate(-10,665)" opacity="0.72">
+        <path d="M0,40 L0,6" stroke="#6B4A2E" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M0,6 C-24,-4 -28,-32 -10,-52 C4,-62 22,-56 26,-36 C30,-16 20,6 0,6 Z" fill="#8FBE7A"></path>
+      </g>
+
+      <g class="eu-bob" style="animation-delay:.3s;"><path d="M480,540 C468,516 472,494 480,482 C488,494 492,516 480,540 Z" fill="#74A65D" opacity="0.75"></path></g>
+      <g class="eu-bob" style="animation-delay:1.5s;"><path d="M250,510 C242,494 244,478 250,470 C256,478 258,494 250,510 Z" fill="#8FBE7A" opacity="0.7"></path></g>
+      <circle class="eu-bob" style="animation-delay:.8s;" cx="330" cy="560" r="3" fill="#4A7A3B"></circle>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:visible;">‹</span><span>2 / 6</span><span class="eu-chev" style="visibility:visible;">›</span></div>
+        <div class="eu-legend-region" style="color:#4A7A3B;">Bosque de los Números</div>
+        <h2 class="eu-legend-title">Aritmética</h2>
+        <p class="eu-legend-desc">Números, sumas y las raíces de todo lo demás.</p>
+        <button type="button" class="eu-legend-go" style="background:#4A7A3B;" data-go="arit">Comenzar →</button>
+      </div>
+    </section>
+    <section class="eu-panel" aria-label="Cálculo">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg3" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="calc" role="button" tabindex="0" aria-label="Cálculo — Galaxia del Infinito">
+            <g transform="translate(195,470) scale(1.6,1.6) translate(0,-70)">
+              
+      <ellipse cx="0" cy="70" rx="110" ry="38" fill="#C99A1E" opacity="0.3"></ellipse>
+      <rect x="-6" y="12" width="12" height="58" fill="#8C6A12" opacity="0.5"></rect>
+
+      <g class="eu-spin-slower">
+        <circle cx="0" cy="0" r="16" fill="url(#sg3)" opacity="0.75"></circle>
+        <path d="M0,0 A9,9 0 1 1 -1,9 A17,17 0 1 1 20,-14 A30,30 0 1 1 -34,27 A46,46 0 1 1 56,-42" fill="none" stroke="#C99A1E" stroke-width="5" stroke-linecap="round" opacity="0.7"></path>
+        <path d="M0,0 A9,9 0 1 1 -1,9 A17,17 0 1 1 20,-14 A30,30 0 1 1 -34,27 A46,46 0 1 1 56,-42" fill="none" stroke="#8C6A12" stroke-width="2" stroke-linecap="round" opacity="0.5" transform="translate(3,3)"></path>
+      </g>
+
+      <g class="eu-twinkle" style="animation-delay:.1s;"><circle cx="-72" cy="-58" r="2.2" fill="#E8C570"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:.9s;"><circle cx="70" cy="-70" r="1.8" fill="#C99A1E"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:1.5s;"><circle cx="30" cy="-96" r="2" fill="#E8C570"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:.5s;"><circle cx="-40" cy="-88" r="1.6" fill="#C99A1E"></circle></g>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:visible;">‹</span><span>3 / 6</span><span class="eu-chev" style="visibility:visible;">›</span></div>
+        <div class="eu-legend-region" style="color:#8C6A12;">Galaxia del Infinito</div>
+        <h2 class="eu-legend-title">Cálculo</h2>
+        <p class="eu-legend-desc">Cambio, límites y el infinito hecho manejable.</p>
+        <button type="button" class="eu-legend-go" style="background:#8C6A12;" data-go="calc">Comenzar →</button>
+      </div>
+    </section>
+    <section class="eu-panel" aria-label="Física">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg4" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="fis" role="button" tabindex="0" aria-label="Física — Órbitas del Cosmos">
+            <g transform="translate(195,470) scale(1.7,1.7) translate(0,-66)">
+              
+      <ellipse cx="0" cy="66" rx="130" ry="45" fill="#F2AF5C" opacity="0.3"></ellipse>
+      <path d="M-30,60 L0,0 L30,60 M0,0 L0,66" stroke="#C97F2E" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.75"></path>
+
+      <circle cx="0" cy="-30" r="30" fill="url(#sg4)" opacity="0.55"></circle>
+      <circle cx="0" cy="-30" r="10" fill="#FBE0BE"></circle>
+      <circle cx="0" cy="-30" r="10" fill="none" stroke="#C97F2E" stroke-width="1.4"></circle>
+
+      <g class="eu-spin-slow">
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#F2AF5C" stroke-width="2"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#C97F2E" stroke-width="1" stroke-dasharray="1 6" opacity="0.6"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#F7CE9A" stroke-width="1.2" transform="rotate(58 0 -30)" opacity="0.75"></ellipse>
+        <ellipse cx="0" cy="-30" rx="58" ry="22" fill="none" stroke="#C97F2E" stroke-width="1.2" transform="rotate(116 0 -30)" opacity="0.85"></ellipse>
+      </g>
+
+      <ellipse cx="0" cy="-30" rx="24" ry="9" fill="none" stroke="#C97F2E" stroke-width="1" stroke-dasharray="1 6" opacity="0.55"></ellipse>
+      <circle r="4" fill="#C97F2E">
+        <animateMotion dur="5.5s" repeatCount="indefinite" path="M24,-30 A24,9 0 1 1 -24,-30 A24,9 0 1 1 24,-30"></animateMotion>
+      </circle>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:visible;">‹</span><span>4 / 6</span><span class="eu-chev" style="visibility:visible;">›</span></div>
+        <div class="eu-legend-region" style="color:#C97F2E;">Órbitas del Cosmos</div>
+        <h2 class="eu-legend-title">Física</h2>
+        <p class="eu-legend-desc">Fuerzas, movimiento y las leyes del universo.</p>
+        <button type="button" class="eu-legend-go" style="background:#C97F2E;" data-go="fis">Comenzar →</button>
+      </div>
+    </section>
+    <section class="eu-panel" aria-label="Geometría">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg5" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="geo" role="button" tabindex="0" aria-label="Geometría — Montañas de las Formas">
+            <g transform="translate(195,470) scale(0.65,1.3) translate(0,-60)">
+              
+      <g class="eu-breathe">
+      <path d="M-220,60 L-140,-70 L-70,-30 L20,-110 L100,60 Z" fill="#F7A374" opacity="0.5"></path>
+      <path d="M-60,60 L20,-130 L60,-90 L120,-160 L200,60 Z" fill="#F2762E"></path>
+      <path d="M40,-160 L52,-140 L28,-140 Z" fill="#FFFFFF" opacity="0.9"></path>
+      <path d="M20,-130 L60,-90 L-4,-90 Z" fill="#FFFFFF" opacity="0.85"></path>
+      <g stroke="#B5501A" stroke-width="1.6" opacity="0.5"><line x1="30" y1="-60" x2="46" y2="-72"></line><line x1="48" y1="-40" x2="64" y2="-54"></line><line x1="66" y1="-20" x2="82" y2="-34"></line><line x1="84" y1="0" x2="100" y2="-14"></line></g>
+      <path d="M20,-125 C0,-90 30,-40 10,20 C-4,20 -14,-30 4,-70" stroke="#B5501A" stroke-width="1.2" stroke-dasharray="2 6" fill="none" opacity="0.4"></path>
+      </g>
+
+      <ellipse cx="-40" cy="66" rx="260" ry="30" fill="#F2762E" opacity="0.3"></ellipse>
+
+      <g stroke="#B5501A" stroke-width="3" stroke-linecap="round" opacity="0.6">
+        <path d="M-170,60 L-170,20 M-182,32 L-158,32 M-186,44 L-154,44"></path>
+        <path d="M-120,64 L-120,28 M-130,38 L-110,38 M-133,50 L-107,50"></path>
+      </g>
+
+      <path d="M60,-190 C68,-196 78,-196 84,-190 M86,-178 C94,-184 104,-184 110,-178" stroke="#2B2118" stroke-width="1.6" fill="none" opacity="0.4"></path>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:visible;">‹</span><span>5 / 6</span><span class="eu-chev" style="visibility:visible;">›</span></div>
+        <div class="eu-legend-region" style="color:#B5501A;">Montañas de las Formas</div>
+        <h2 class="eu-legend-title">Geometría</h2>
+        <p class="eu-legend-desc">Formas, espacio y las reglas que las gobiernan.</p>
+        <button type="button" class="eu-legend-go" style="background:#B5501A;" data-go="geo">Comenzar →</button>
+      </div>
+    </section>
+    <section class="eu-panel" aria-label="Trigonometría">
+      <div class="eu-scene eu-scene-front">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax meet">
+          <defs>
+            <radialGradient id="sg6" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFF6D2" stop-opacity="0.95"></stop>
+              <stop offset="55%" stop-color="#FFE9A0" stop-opacity="0.55"></stop>
+              <stop offset="100%" stop-color="#FFE9A0" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <g class="eu-hotspot-m" data-go="trig" role="button" tabindex="0" aria-label="Trigonometría — Costa de las Ondas">
+            <g transform="translate(195,470) scale(0.845,1.3) translate(-1278,-669)">
+              
+      <ellipse cx="1278" cy="669" rx="195" ry="52" fill="#4BBFBF" opacity="0.4"></ellipse>
+
+      <path d="M1066,620 C1120,600 1170,640 1220,618 S1310,596 1360,618 S1440,640 1490,620" stroke="#2E8F8F" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.55"></path>
+      <path d="M1066,654 C1120,634 1170,674 1220,652 S1310,630 1360,652 S1440,674 1490,654" stroke="#4BBFBF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"></path>
+      <path d="M1066,688 C1120,668 1170,708 1220,686 S1310,664 1360,686 S1440,708 1490,688" stroke="#9EE0E0" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.45"></path>
+      <path d="M1066,722 C1120,704 1170,740 1220,720 S1310,700 1360,720 S1440,740 1490,722" stroke="#2E8F8F" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.4"></path>
+      <g stroke="#FFFFFF" stroke-width="1.4" opacity="0.6"><line x1="1150" y1="638" x2="1160" y2="632"></line><line x1="1280" y1="646" x2="1290" y2="640"></line><line x1="1400" y1="632" x2="1410" y2="626"></line></g>
+
+      <g transform="translate(1230,630)">
+        <g class="eu-rock">
+          <path d="M-42,26 C-24,42 24,42 42,26 C30,40 -30,40 -42,26 Z" fill="#1D6E93"></path>
+          <path d="M0,26 L0,-64" stroke="#2E8F8F" stroke-width="3"></path>
+          <path d="M0,-60 C-34,-48 -36,-14 0,10 Z" fill="#FFFFFF" opacity="0.92"></path>
+          <path d="M0,-60 C34,-48 36,-14 0,10 Z" fill="#FFFFFF" opacity="0.8"></path>
+          <path d="M-24,-25 L24,-25" stroke="#2E8F8F" stroke-width="1.4" opacity="0.5"></path>
+          <path d="M0,-64 L14,-58 L0,-52 Z" fill="#F2CA50"></path>
+        </g>
+        <ellipse cx="0" cy="34" rx="34" ry="5" fill="#0B2436" opacity="0.2"></ellipse>
+      </g>
+
+      <g class="eu-twinkle" style="animation-delay:.4s;"><circle cx="1120" cy="600" r="3" fill="#FFFFFF" opacity="0.85"></circle></g>
+      <g class="eu-twinkle" style="animation-delay:1.2s;"><circle cx="1340" cy="590" r="2.4" fill="#FFFFFF" opacity="0.8"></circle></g>
+    
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="eu-legend">
+        <div class="eu-legend-nav"><span class="eu-chev" style="visibility:visible;">‹</span><span>6 / 6</span><span class="eu-chev" style="visibility:hidden;">›</span></div>
+        <div class="eu-legend-region" style="color:#2E8F8F;">Costa de las Ondas</div>
+        <h2 class="eu-legend-title">Trigonometría</h2>
+        <p class="eu-legend-desc">Ángulos y ondas que van y vuelven, como la marea.</p>
+        <button type="button" class="eu-legend-go" style="background:#2E8F8F;" data-go="trig">Comenzar →</button>
+      </div>
+    </section>
+  </div>
+
+  <footer class="eu-footer">
+    <div style="font-family:'Manrope',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.2em;color:#33291C;">EUREMA</div>
+    <div style="font-family:'Manrope',sans-serif;font-weight:600;font-size:9.5px;letter-spacing:0.16em;color:#1F8585;margin-top:3px;">WHERE EVERY CONCEPT CLICKS</div>
+  </footer>
+
+
+</div>
+
+<div class="eu-soon" id="soon" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+  <div>
+    <button type="button" class="eu-soon-back" data-close>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      Volver al mundo
+    </button>
+    <div class="eu-soon-title" id="soon-title"></div>
+    <p>Esta región todavía se está construyendo. ¡Pronto tendrá sus propios temas!</p>
+  </div>
+</div>
+
+
+<script>
+(function () {
+  // Cada mundo: posición en el carrusel móvil (orden alfabético) y a dónde lleva.
+  // url: null = todavía "próximamente". Cuando exista la página, pon su ruta, p. ej. 'aritmetica/'.
+  var WORLDS = {
+    alg:  { idx: 0, title: 'Álgebra',       color: '#A67E1E', url: 'algebra/' },
+    arit: { idx: 1, title: 'Aritmética',    color: '#4A7A3B', url: null },
+    calc: { idx: 2, title: 'Cálculo',       color: '#8C6A12', url: null },
+    fis:  { idx: 3, title: 'Física',        color: '#C97F2E', url: null },
+    geo:  { idx: 4, title: 'Geometría',     color: '#B5501A', url: 'geometria/' },
+    trig: { idx: 5, title: 'Trigonometría', color: '#2E8F8F', url: null }
+  };
+  var KEY = 'eurema:lastWorld';
+  var soon = document.getElementById('soon');
+
+  function pick(key) {
+    var wp = document.getElementById('wp-' + key);
+    var wasOpen = wp && wp.classList.contains('is-open');
+    document.querySelectorAll('.eu-waypoint.is-open').forEach(function (n) { n.classList.remove('is-open'); });
+    if (wp && !wasOpen) wp.classList.add('is-open');
+  }
+  function enter(key) {
+    var w = WORLDS[key]; if (!w) return;
+    try { sessionStorage.setItem(KEY, String(w.idx)); } catch (e) {}
+    if (w.url) { location.href = w.url; return; }
+    document.getElementById('soon-title').textContent = w.title;
+    document.getElementById('soon-title').style.color = w.color;
+    soon.classList.add('is-open');
+  }
+  function closeSoon() { soon.classList.remove('is-open'); }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]');
+    if (t) { enter(t.getAttribute('data-go')); return; }
+    t = e.target.closest('[data-pick]');
+    if (t) { pick(t.getAttribute('data-pick')); return; }
+    if (e.target.closest('[data-close]')) closeSoon();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeSoon();
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"]')) {
+      e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }
+  });
+
+  // Al volver desde un mundo, el carrusel móvil queda en el mundo donde estabas.
+  function restore() {
+    var c = document.querySelector('.eu-carousel');
+    if (!c || !c.clientWidth) return;
+    var i = 0; try { i = parseInt(sessionStorage.getItem(KEY) || '0', 10) || 0; } catch (e) {}
+    c.scrollLeft = i * c.clientWidth;
+  }
+  restore();
+  window.addEventListener('load', restore);
+  window.addEventListener('pageshow', function (ev) { if (ev.persisted) restore(); });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EUREMA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;800&family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tq:#F2762E; --tp:#B5501A; --tql2:#F7A374; --brand:#4BBFBF; --do:#F2CA50; --ti:#33291C; --cr:#FDF6E8;
+  --vx:#1F8585; --vy:#D9A825;
+  --ok:#578A44; --okbg:#E6F1E0; --er:#D93A3A; --erbg:#FBE2E0;
+  --tql:#FDF0E9; --line:rgba(51,41,28,.12); --mut:#7d705c;
+  --board-h:0px;
+}
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+body{ margin:0; background:var(--cr); color:var(--ti); font-family:"Nunito Sans",system-ui,sans-serif; font-size:16px; line-height:1.6; -webkit-tap-highlight-color:transparent; }
+button{ font:inherit; color:inherit; }
+.frame{ max-width:560px; margin:0 auto; padding:0 16px 40px; }
+
+/* ---------- top bar ---------- */
+.top{ display:flex; align-items:center; justify-content:space-between; padding:14px 0 10px; }
+.brand{ display:flex; align-items:center; gap:8px; font-family:Manrope,sans-serif; font-weight:800; letter-spacing:.2em; font-size:13px; }
+.brand small{ font-family:"Nunito Sans"; font-weight:600; letter-spacing:0; color:var(--tp); font-size:12px; }
+.nav{ display:flex; gap:6px; align-items:center; overflow-x:auto; padding:4px 0 12px; border-bottom:1px solid var(--line); scrollbar-width:none; }
+.nav::-webkit-scrollbar{ display:none; }
+.nav .intro-btn{ border:1.5px solid var(--tq); background:transparent; border-radius:999px; padding:5px 14px; font-family:Nunito; font-weight:800; font-size:14px; color:var(--tp); cursor:pointer; white-space:nowrap; }
+.nav .intro-btn.on{ background:var(--tq); color:#fff; }
+.pd{ width:34px; height:34px; flex-shrink:0; display:grid; place-items:center; cursor:pointer; background:none; border:none; position:relative; font-family:Nunito; font-weight:800; font-size:13px; color:var(--tp); }
+.pd::before{ content:""; position:absolute; width:22px; height:22px; transform:rotate(45deg); border:1.5px solid var(--tq); background:#fff; border-radius:3px; }
+.pd span{ position:relative; }
+.pd.on::before{ background:var(--tq); }
+.pd.on span{ color:#fff; }
+.pd.done::before{ background:var(--tp); border-color:var(--tp); }
+.pd.done span{ color:#fff; }
+.pd.off{ opacity:.35; cursor:not-allowed; }
+.pd:focus-visible,.nav .intro-btn:focus-visible,.btn:focus-visible,.opt:focus-visible{ outline:2px solid var(--tp); outline-offset:3px; }
+
+/* ---------- intro / video ---------- */
+.stage{ position:relative; overflow:hidden; touch-action:pan-y; user-select:none; }
+.track{ display:flex; transition:transform .45s cubic-bezier(.3,.8,.3,1); }
+.slide{ flex:0 0 100%; min-height:min(640px,78vh); padding:22px 4px 10px; display:flex; flex-direction:column; }
+.slide h2{ font-family:Nunito; font-weight:900; font-size:clamp(30px,8vw,42px); line-height:1.08; margin:0 0 6px; letter-spacing:-.01em; }
+.slide p.sub{ font-size:19px; margin:4px 0 0; color:#5b4f3d; max-width:30ch; }
+.slide .art{ flex:1; display:flex; align-items:center; justify-content:center; padding:10px 0; }
+.slide svg{ max-width:100%; height:auto; overflow:visible; }
+.slide svg.mp-demo, .planehost svg{ overflow:hidden; }
+.slide svg.mp-demo{ background:#fff; border-radius:10px; }
+.kick{ font-family:Nunito; font-weight:800; color:var(--tp); font-size:15px; margin-bottom:4px; }
+.ctrl{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 4px; }
+.pips{ display:flex; gap:7px; flex-wrap:wrap; justify-content:center; }
+.pip{ width:9px; height:9px; transform:rotate(45deg); background:var(--tq); opacity:.25; border-radius:1px; transition:opacity .3s, background .3s; }
+.pip.seen{ opacity:.65; }
+.pip.on{ opacity:1; background:var(--tp); }
+.arrow{ width:44px; height:44px; border-radius:50%; border:1.5px solid var(--tq); background:#fff; cursor:pointer; font-size:20px; color:var(--tp); display:grid; place-items:center; }
+.arrow:disabled{ opacity:.3; cursor:default; }
+.swipe-hint{ text-align:center; font-size:13px; color:var(--mut); margin-top:2px; }
+
+/* reveal animations inside slides */
+.rv{ opacity:0; }
+.slide.on .rv{ animation:rvin .6s ease forwards; animation-delay:var(--d,0s); }
+@keyframes rvin{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none} }
+.slide.on .draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); animation:draw 1.6s ease forwards; animation-delay:var(--d,0s); }
+@keyframes draw{ to{ stroke-dashoffset:0 } }
+.tag{ font-family:Nunito; font-weight:800; font-size:15px; }
+.legend-row{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:15px; margin-top:6px; }
+.legend-row b{ font-family:Nunito; font-weight:800; }
+
+.mission4{ display:grid; grid-template-columns:repeat(2,1fr); gap:0; border-top:1px solid var(--line); margin-top:14px; }
+.mission4 div{ padding:14px 6px 14px 0; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; font-family:Nunito; font-weight:800; font-size:19px; }
+.mission4 div:nth-child(odd){ border-right:1px solid var(--line); }
+.mission4 div:nth-child(even){ padding-left:14px; }
+.mission4 i{ width:16px; height:16px; transform:rotate(45deg); background:var(--tq); flex-shrink:0; border-radius:2px; }
+.mission4 small{ display:block; font-family:"Nunito Sans"; font-weight:400; font-size:13px; color:var(--mut); }
+.cta{ margin-top:20px; background:var(--tq); color:#fff; border:none; border-radius:999px; padding:14px 26px; font-family:Nunito; font-weight:900; font-size:18px; cursor:pointer; align-self:flex-start; }
+.cta:hover{ background:color-mix(in srgb, var(--tq) 85%, #33291C); }
+.eslider{ width:100%; accent-color:var(--tp); margin-top:6px; }
+
+/* ---------- board (sticky) ---------- */
+.board{ position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--cr) 90%, transparent); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); padding-top:8px; border-bottom:1px solid var(--line); }
+.mission{ display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.mi{ padding:7px 6px 7px 8px; border-right:1px solid var(--line); min-width:0; transition:background .4s; }
+.mi:last-child{ border-right:none; }
+.mi .lb{ display:flex; align-items:center; gap:7px; font-family:Nunito; font-weight:800; font-size:13px; white-space:nowrap; }
+.mi .ck{ width:12px; height:12px; transform:rotate(45deg); border:1.5px solid var(--tq); border-radius:2px; flex-shrink:0; transition:background .3s; }
+.mi .vl{ font-family:Nunito; font-weight:800; font-size:13.5px; line-height:1.25; color:var(--mut); min-height:34px; padding-top:2px; }
+.mi.got .ck{ background:var(--tq); }
+.mi.got .vl{ color:var(--tp); }
+.mi.flash{ background:#fbeec4; }
+.bankrow{ display:flex; gap:6px; align-items:center; padding:7px 0; overflow-x:auto; scrollbar-width:none; min-height:38px; }
+.bankrow::-webkit-scrollbar{ display:none; }
+.bankrow .bl{ font-size:12px; color:var(--mut); white-space:nowrap; font-weight:600; }
+.clue{ white-space:nowrap; font-family:Nunito; font-weight:800; font-size:13.5px; padding:2px 10px; border-radius:999px; background:#fff; border:1px solid color-mix(in srgb, var(--tq) 50%, transparent); animation:pop .4s ease; }
+@keyframes pop{ from{ transform:scale(.6); opacity:0 } to{ transform:none; opacity:1 } }
+.planehost{ display:flex; gap:8px; position:relative; }
+.planehost .pl{ flex:1; min-width:0; position:relative; }
+.planehost svg{ width:100%; display:block; background:#fff; border-radius:10px; }
+.pl .cap{ font-family:Nunito; font-weight:800; font-size:13px; text-align:center; margin-top:3px; }
+.pl .mark{ position:absolute; top:8px; right:10px; font-family:Nunito; font-weight:900; font-size:22px; }
+.pl.bad svg{ opacity:.55; }
+.pl.bad .mark{ color:var(--er); }
+.pl.good .mark{ color:var(--ok); }
+.boardtools{ display:flex; justify-content:flex-end; padding:4px 0 6px; gap:12px; }
+.linkbtn{ background:none; border:none; color:var(--tp); font-weight:700; font-size:13px; cursor:pointer; padding:2px 0; }
+.board.min .planehost{ display:none; }
+
+/* ---------- ruta (steps) ---------- */
+.ruta{ position:relative; padding:18px 0 0 34px; }
+.ruta::before{ content:""; position:absolute; left:10px; top:24px; bottom:0; width:3px; background:var(--tq); opacity:.25; border-radius:3px; }
+.st{ position:relative; padding:0 0 26px; animation:stin .45s ease; }
+@keyframes stin{ from{ opacity:0; transform:translateY(10px)} to{ opacity:1; transform:none } }
+.st .mk{ position:absolute; left:-31px; top:3px; width:17px; height:17px; transform:rotate(45deg); background:#fff; border:2px solid var(--tq); border-radius:2px; }
+.st.cur .mk{ background:var(--tq); box-shadow:0 0 0 5px color-mix(in srgb, var(--tq) 20%, transparent); }
+.st.done .mk{ background:var(--tp); border-color:var(--tp); opacity:.65; }
+.st.final .mk{ background:var(--do); border-color:var(--do); opacity:1; }
+.st h4{ font-family:Nunito; font-weight:800; font-size:18px; margin:0 0 4px; line-height:1.3; }
+.st p{ margin:4px 0; }
+.st .note{ color:var(--mut); font-size:14.5px; }
+.enun{ font-size:18px; line-height:1.75; }
+.dato{ font-family:Nunito; font-weight:800; font-size:17px; border:none; background:var(--tql); color:var(--tp); border-bottom:2px dashed var(--tq); padding:0 6px; border-radius:6px 6px 0 0; cursor:pointer; white-space:nowrap; animation:hint 1.8s ease infinite; }
+.dato.used{ background:transparent; border-bottom:2px solid var(--tq); animation:none; cursor:default; color:var(--ti); }
+@keyframes hint{ 50%{ background:color-mix(in srgb, var(--tq) 28%, #fff) } }
+
+.m{ font-family:Nunito; font-weight:700; font-size:21px; white-space:nowrap; overflow:hidden; padding:6px 0; line-height:1.2; display:block; }
+.m.big{ font-size:26px; }
+.m .ln{ display:inline; }
+.fr{ display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 .12em; }
+.fr > span{ padding:0 .18em; line-height:1.15; }
+.fr > span:first-child{ border-bottom:2px solid currentColor; }
+.vx{ color:var(--vx); font-style:normal; font-weight:900; }
+.vy{ color:var(--vy); font-style:normal; font-weight:900; }
+sup{ font-size:.62em; }
+.hl{ background:#fbeec4; border-radius:5px; padding:0 .15em; }
+.hlt{ background:var(--tql); border-radius:5px; padding:0 .15em; }
+.lines .ln2{ display:block; opacity:0; transform:translateY(4px); transition:.35s; }
+.lines .ln2.show{ opacity:1; transform:none; }
+.lines .why{ display:block; font-family:"Nunito Sans"; font-weight:400; font-size:14px; color:var(--mut); white-space:normal; }
+
+.btn{ margin-top:8px; background:var(--tq); color:#fff; border:none; border-radius:999px; padding:9px 20px; font-family:Nunito; font-weight:800; font-size:16px; cursor:pointer; }
+.btn:hover{ background:color-mix(in srgb, var(--tq) 85%, #33291C); }
+.btn.ghost{ background:transparent; color:var(--tp); border:1.5px solid var(--tq); }
+.btn[hidden]{ display:none; }
+.opts{ display:flex; flex-direction:column; gap:0; margin-top:6px; border-top:1px solid var(--line); }
+.opt{ text-align:left; background:none; border:none; border-bottom:1px solid var(--line); padding:11px 8px 11px 30px; cursor:pointer; position:relative; font-size:16px; line-height:1.4; transition:background .2s; }
+.opt::before{ content:""; position:absolute; left:8px; top:16px; width:10px; height:10px; transform:rotate(45deg); border:1.5px solid var(--tq); border-radius:1px; }
+.opt:hover{ background:color-mix(in srgb, var(--tq) 7%, transparent); }
+.opt.ok{ background:var(--okbg); color:#2f5a23; }
+.opt.ok::before{ background:var(--ok); border-color:var(--ok); }
+.opt.bad{ background:var(--erbg); color:#8f2020; animation:shake .35s; }
+.opt.bad::before{ border-color:var(--er); }
+.opts.row{ flex-direction:row; border:none; gap:10px; }
+.opts.row .opt{ flex:1; border:1.5px solid var(--line); border-radius:12px; padding:12px; text-align:center; font-family:Nunito; font-weight:800; }
+.opts.row .opt::before{ display:none; }
+.opts.row .opt svg{ display:block; margin:0 auto 4px; }
+.opts[data-locked] .opt{ pointer-events:none; }
+@keyframes shake{ 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+.fb{ margin-top:8px; padding:7px 12px; border-radius:8px; font-size:15px; display:none; }
+.fb.ok{ display:block; background:var(--okbg); color:#2f5a23; }
+.fb.bad{ display:block; background:var(--erbg); color:#8f2020; }
+.fb b{ font-family:Nunito; font-weight:800; }
+
+input.blank{ font-family:Nunito; font-weight:800; font-size:.95em; width:3.4em; text-align:center; border:none; border-bottom:2.5px solid var(--tq); background:var(--tql); border-radius:6px 6px 0 0; padding:1px 2px; color:var(--ti); outline:none; }
+input.blank:focus{ border-bottom-color:var(--tp); background:color-mix(in srgb, var(--tq) 18%, #fff); }
+input.blank.okv{ background:var(--okbg); border-bottom-color:var(--ok); }
+input.blank.badv{ background:var(--erbg); border-bottom-color:var(--er); animation:shake .35s; }
+
+.slot{ display:inline-flex; min-width:2.2em; height:1.35em; align-items:center; justify-content:center; border:2px dashed var(--tq); border-radius:7px; background:#fff; padding:0 .2em; transition:.2s; vertical-align:middle; }
+.slot.over{ background:var(--tql); border-style:solid; }
+.slot.fill{ border:2px solid var(--ok); background:var(--okbg); }
+.slot.bad{ border-color:var(--er); background:var(--erbg); animation:shake .35s; }
+.slot.sel-target{ box-shadow:0 0 0 3px color-mix(in srgb, var(--tq) 35%, transparent); }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 2px; }
+.chip{ font-family:Nunito; font-weight:800; font-size:16px; padding:5px 13px; background:#fff; border:1.5px solid var(--tq); border-radius:999px; cursor:grab; touch-action:none; user-select:none; }
+.chip.sel{ background:var(--tq); color:#fff; }
+.chip.used{ opacity:.3; pointer-events:none; }
+.chip.cx{ border-color:var(--vx); color:var(--vx); }
+.chip.cy{ border-color:var(--vy); color:#a57c0e; }
+.chip.ghost{ position:fixed; z-index:100; pointer-events:none; cursor:grabbing; box-shadow:0 6px 16px rgba(51,41,28,.18); }
+.draghelp{ font-size:13px; color:var(--mut); }
+
+.stop{ border-left:4px solid var(--do); padding:4px 0 4px 12px; margin:6px 0; }
+.stop b{ font-family:Nunito; font-weight:900; }
+.win{ border-top:3px solid var(--do); border-bottom:1px solid var(--line); padding:12px 0; margin-top:6px; }
+.win .m{ font-size:28px; }
+.confetti{ position:fixed; inset:0; pointer-events:none; z-index:200; overflow:hidden; }
+.confetti i{ position:absolute; top:-20px; width:11px; height:11px; transform:rotate(45deg); animation:fall 1.6s ease-in forwards; }
+@keyframes fall{ to{ transform:translateY(105vh) rotate(405deg); opacity:.2 } }
+
+.skip{ padding:40px 0; text-align:center; color:var(--mut); }
+.wm{ margin-top:40px; padding-top:18px; border-top:1px solid var(--line); display:flex; flex-direction:column; align-items:center; gap:4px; }
+.wm .wmn{ font-family:Manrope; font-weight:800; letter-spacing:.2em; font-size:15px; }
+.wm .wmt{ font-family:Manrope; font-weight:500; color:var(--tp); font-size:12px; letter-spacing:.06em; }
+
+
+.modebar{ display:flex; align-items:stretch; gap:8px; padding:14px 0 0; }
+.modebar .ml{ font-family:Nunito; font-weight:800; font-size:13px; color:var(--mut); align-self:center; margin-right:2px; }
+.mp{ flex:1; text-align:left; background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:7px 12px; cursor:pointer; font-family:Nunito; font-weight:800; font-size:15px; line-height:1.2; }
+.mp small{ display:block; font-family:"Nunito Sans"; font-weight:400; font-size:12px; color:var(--mut); }
+.mp.on{ border-color:var(--tq); background:var(--tql); color:var(--tp); }
+.mp.on[data-m="examen"]{ border-color:var(--ti); background:var(--ti); color:var(--cr); }
+.mp.on[data-m="examen"] small{ color:#d9ccb3; }
+.terms{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0; }
+.term{ font-family:Nunito; font-weight:800; font-size:19px; padding:4px 10px; border-radius:8px; border:1.5px dashed var(--tq); background:#fff; cursor:pointer; }
+.term.eq{ border:none; background:none; cursor:default; }
+.term.g{ cursor:default; border-style:solid; }
+.term.gx{ background:#dcefef; border-color:var(--vx); color:var(--vx); }
+.term.gy{ background:#fbf0cf; border-color:var(--vy); color:#a57c0e; }
+.term.gc{ background:#ece6da; border-color:var(--ti); text-decoration:line-through; opacity:.6; }
+.term.nope{ animation:shake .35s; border-color:var(--er); }
+.stats{ display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--line); margin-bottom:8px; }
+.stats div{ padding:8px 0; text-align:center; font-size:13px; color:var(--mut); border-right:1px solid var(--line); }
+.stats div:last-child{ border-right:none; }
+.stats b{ display:block; font-family:Nunito; font-weight:900; font-size:26px; color:var(--ti); }
+.eltab div{ display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid var(--line); font-size:15px; }
+.eltab b{ font-family:Nunito; font-weight:800; }
+.eltab span{ text-align:right; }
+.exf .m{ padding:4px 0; }
+.sqk{ margin-right:8px; }
+
+
+/* ---------- montaña guía ---------- */
+.say{ display:flex; align-items:flex-end; gap:10px; margin:10px 0 6px; }
+.say .mtn{ flex-shrink:0; overflow:visible; }
+.bub{ position:relative; background:#fff; border:2px solid var(--tql2); border-radius:16px; padding:9px 14px; font-family:Nunito; font-weight:800; font-size:16px; line-height:1.4; color:var(--ti); margin-bottom:6px; }
+.bub::before{ content:""; position:absolute; left:-8px; bottom:14px; width:12px; height:12px; background:#fff; border-left:2px solid var(--tql2); border-bottom:2px solid var(--tql2); transform:rotate(45deg); }
+.slide .bub{ font-size:18px; }
+.mtn .br{ transform-origin:50% 100%; animation:breathe 3.4s ease-in-out infinite; }
+@keyframes breathe{ 50%{ transform:scale(1.04,.96); } }
+.slide.on .mtn .mdraw{ stroke-dasharray:1; stroke-dashoffset:1; animation:draw .9s ease forwards; }
+.slide.on .mtn .mfill{ opacity:0; animation:fillin .5s ease .7s forwards; }
+@keyframes fillin{ to{ opacity:1; } }
+.slide.on .bub{ opacity:0; animation:rvin .5s ease .6s forwards; }
+.fb.ok,.fb.bad{ display:flex; gap:10px; align-items:center; }
+.fb .mtn{ flex-shrink:0; }
+.lvl{ font-family:"Nunito Sans"; font-weight:600; font-size:14px; color:var(--mut); }
+/* ---------- navegación por niveles ---------- */
+.lg{ display:flex; flex-direction:column; align-items:center; padding:0 6px; border-left:1px solid var(--line); }
+.lgd{ display:flex; gap:2px; }
+.lgn{ font-size:10.5px; font-weight:700; color:var(--mut); margin-top:-2px; white-space:nowrap; }
+.pd.l0::before{ border-color:color-mix(in srgb, var(--tq) 40%, transparent); }
+.pd.l1::before{ border-color:color-mix(in srgb, var(--tq) 70%, transparent); }
+.pd.l2::before{ border-color:var(--tp); }
+
+@media (max-width:420px){
+  .mi .lb{ font-size:12px; gap:5px; }
+  .mi .vl{ font-size:12.5px; }
+  .m{ font-size:19px; }
+}
+
+
+/* ---------- fondo del mundo de las Montañas ---------- */
+.backdrop{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.42; }
+.backdrop svg{ display:block; }
+.frame{ position:relative; z-index:1; }
+
+
+/* datos con tipo (recta): pendiente / punto */
+.dato.km{ background:color-mix(in srgb, var(--tq) 14%, #fff); border-bottom-color:var(--tp); color:var(--tp); }
+.dato.kp{ background:#FCF1CF; border-bottom-color:#D9A825; color:#7A5A06; }
+.dato.km.used, .dato.kp.used{ background:transparent; color:var(--ti); }
+
+
+.legend{ display:flex; flex-wrap:wrap; gap:4px 14px; justify-content:center; padding:5px 4px 0; font-size:12.5px; font-weight:700; color:var(--ti); }
+.legend span{ display:flex; align-items:center; gap:6px; }
+.legend i{ width:20px; height:0; display:inline-block; }
+
+
+.cmp{ width:100%; border-collapse:collapse; font-size:14px; }
+.cmp th{ font-family:Nunito; font-weight:800; font-size:12.5px; color:var(--mut); text-transform:none; letter-spacing:0; padding:6px 4px; }
+.cmp td{ text-align:center; padding:9px 4px; font-size:18px; font-weight:900; font-family:Nunito; }
+.cmp td:first-child{ text-align:left; font-size:16px; }
+.cmp td.si{ color:var(--ok); } .cmp td.no{ color:#B9AE9A; }
+
+
+/* ---------- arreglo: las diapositivas nunca más anchas que la pantalla ---------- */
+.slide{ min-width:0; overflow:hidden; }
+.slide .art, .slide .art *, .slide .say, .slide .bub{ min-width:0; }
+.slide .art > div[style*="grid"]{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
+.slide .bub{ overflow-wrap:anywhere; }
+
+/* ---------- celular ---------- */
+.sumrow{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+.sumrow b{ font-family:Nunito; min-width:150px; }
+@media (max-width:480px){
+  .frame{ padding:0 12px 32px; }
+  .brand small{ display:none; }
+  .slide{ min-height:auto; padding-top:14px; }
+  .slide h2{ font-size:30px; }
+  .slide .bub, .bub{ font-size:15px; padding:8px 11px; }
+  .say .mtn{ width:54px; height:auto; }
+  .fb .mtn{ width:28px; }
+  .mission4 div{ font-size:16px; gap:8px; }
+  .mi{ padding:6px 3px 6px 5px; }
+  .mi .lb{ font-size:11.5px; gap:4px; }
+  .mi .ck{ width:9px; height:9px; }
+  .mi .vl{ font-size:12px; min-height:30px; }
+  .enun{ font-size:16.5px; }
+  .dato{ font-size:15.5px; white-space:normal; }
+  .ruta{ padding-left:28px; }
+  .ruta::before{ left:7px; }
+  .st .mk{ left:-27px; width:15px; height:15px; }
+  .st h4{ font-size:17px; }
+  .m{ font-size:19px; }
+  .opts.row .opt{ padding:10px 6px; font-size:15px; }
+  .modebar{ gap:6px; } .modebar .ml{ display:none; }
+  .mp{ padding:6px 9px; font-size:14px; } .mp small{ font-size:11px; }
+  .chip{ font-size:15px; padding:5px 11px; }
+  .sumrow{ flex-direction:column; gap:0; } .sumrow b{ min-width:0; }
+  .lg{ padding:0 3px; } .pd{ width:30px; height:30px; } .pd::before{ width:19px; height:19px; }
+  .arrow{ width:40px; height:40px; }
+  .term{ font-size:17px; padding:3px 8px; }
+  .stats b{ font-size:22px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  .rv{ opacity:1 !important; }
+}
+</style>
+</head>
+<body>
+<div class="frame">
+  <header class="top">
+    <div class="brand"><span id="isoTop"></span>EUREMA <small id="subT"></small></div>
+  </header>
+  <nav class="nav" id="nav" aria-label="Secciones"></nav>
+  <main id="app"></main>
+  <footer class="wm">
+    <span id="isoWm"></span>
+    <div class="wmn">EUREMA</div>
+    <div class="wmt">Where every concept clicks</div>
+  </footer>
+</div>
+<script>
+/* ╔══════════════════════════════════════════════════════════╗
+   ║ 1 · TEMA (mundo de las Montañas de las Formas)            ║
+   ║ Cada tema de geometría analítica tiene su color.          ║
+   ║ Gea (la mascota) y los colores pedagógicos de x, y,       ║
+   ║ verde y rojo NO cambian con el tema.                      ║
+   ╚══════════════════════════════════════════════════════════╝ */
+const THEMES = {
+  recta:          { nombre:'La recta',        acc:'#5E6E86', deep:'#3E4A5C', light:'#A9B4C4', tint:'#EEF1F5' }, // piedra
+  circunferencia: { nombre:'La circunferencia', acc:'#7B57C2', deep:'#55378F', light:'#B9A3E3', tint:'#F3EEFB' }, // violeta
+  parabola:       { nombre:'La parábola',     acc:'#B4458E', deep:'#823063', light:'#DB9CC4', tint:'#F9EEF5' }, // ciruela
+  elipse:         { nombre:'La elipse',       acc:'#F2762E', deep:'#B5501A', light:'#F7A374', tint:'#FDF0E9' }, // naranja montaña
+  hiperbola:      { nombre:'La hipérbola',    acc:'#3E72B8', deep:'#2A5088', light:'#9CB9E0', tint:'#EDF2FA' }, // azul noche
+};
+const TEMA = 'hiperbola';
+const T = THEMES[(new URLSearchParams(location.search)).get('tema')] || THEMES[TEMA];
+(r=>{ r.setProperty('--tq',T.acc); r.setProperty('--tp',T.deep); r.setProperty('--tql2',T.light); r.setProperty('--tql',T.tint); })(document.documentElement.style);
+</script>
+<script>
+/* ╔═ 2 · MOTOR (compartido por todas las herramientas de geometría) ═╗ */
+/* =========================================================
+   Utilidades
+   ========================================================= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const h = (tag, cls, html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; };
+const NS = 'http://www.w3.org/2000/svg';
+
+function iso(w){ return `<svg viewBox="0 0 64 64" width="${w}" height="${w}" aria-hidden="true">
+<line x1="15" y1="49" x2="46" y2="18" stroke="#4BBFBF" stroke-opacity=".25" stroke-width="2.75" stroke-linecap="round"/>
+<rect x="15" y="41" width="7.07" height="7.07" transform="rotate(45 18.5 44.5)" fill="#4BBFBF" fill-opacity=".35"/>
+<rect x="24.5" y="28.5" width="9.9" height="9.9" transform="rotate(45 29.5 33.5)" fill="#4BBFBF" fill-opacity=".65"/>
+<rect x="34.6" y="15.6" width="12.73" height="12.73" transform="rotate(45 41 22)" fill="#F2CA50"/></svg>`; }
+$('#isoTop').innerHTML = iso(26); $('#isoWm').innerHTML = iso(34);
+
+/* --- notación matemática --- */
+const X = '<i class="vx">x</i>', Y = '<i class="vy">y</i>';
+const fr = (n,d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const sq = s => `${s}<sup>2</sup>`;
+const M = (html, cls='') => `<span class="m ${cls}"><span class="ln">${html}</span></span>`;
+const blank = id => `<input class="blank" data-inp="${id}" autocomplete="off" aria-label="respuesta">`;
+const slot = id => `<span class="slot" data-slot="${id}"></span>`;
+const neg = v => String(v).replace('-', '−');
+// ecuación ordinaria con números ya puestos (simplifica signos)
+function par(v, c){ // (x − c)²  → ya simplificado
+  if(c===0) return sq(v);
+  return sq(`(${v} ${c>0?'−':'+'} ${Math.abs(c)})`);
+}
+
+/* ajusta ecuaciones para que nunca salten de línea */
+function fit(root=document){
+  $$('.m', root).forEach(m=>{
+    const base = m.dataset.base ? +m.dataset.base : parseFloat(getComputedStyle(m).fontSize);
+    m.dataset.base = base; m.style.fontSize = base+'px';
+    let fs = base, guard=0;
+    while(m.scrollWidth > m.clientWidth + 1 && fs > 11 && guard++<40){ fs -= 1; m.style.fontSize = fs+'px'; }
+  });
+}
+window.addEventListener('resize', ()=>fit());
+
+function parseNum(s){
+  if(s==null) return NaN;
+  s = String(s).trim().toLowerCase().replace(/−/g,'-').replace(/,/g,'.').replace(/\s+/g,'').replace(/ra[ií]z|sqrt/g,'√');
+  if(!s) return NaN;
+  let js = s.replace(/√\(([^()]+)\)/g,'Q($1)').replace(/√([\d.]+)/g,'Q($1)').replace(/([\d.)])(?=Q|\()/g,'$1*').replace(/\)(?=[\d.])/g,')*');
+  if(!/^[\d.+\-*/()Q]*$/.test(js)) return NaN;
+  try{ const v = Function('Q','return ('+js+')')(Math.sqrt); return (typeof v==='number' && isFinite(v)) ? v : NaN; }catch(e){ return NaN; }
+}
+const same = (a,b) => Math.abs(a-b) < 0.006*Math.max(1,Math.abs(b));
+
+function confetti(){
+  const c = h('div','confetti'); document.body.appendChild(c);
+  const cols=['#F2CA50',T.acc,T.deep,'#F2CA50'];
+  for(let i=0;i<34;i++){ const d=document.createElement('i'); d.style.left=Math.random()*100+'vw'; d.style.background=cols[i%4]; d.style.animationDelay=(Math.random()*.5)+'s'; d.style.opacity=.9; c.appendChild(d); }
+  setTimeout(()=>c.remove(), 2400);
+}
+
+/* =========================================================
+   Plano cartesiano
+   ========================================================= */
+const PT = { // estilos de puntos: C centro · V vértice · B extremo eje menor · F foco · P punto dado
+  C:{shape:'d', r:6, fill:'#33291C'},
+  V:{shape:'d', r:7, fill:T.acc},
+  B:{shape:'d', r:6, fill:T.acc, op:.55},
+  F:{shape:'c', r:5.5, fill:'#fff', stroke:T.deep},
+  P:{shape:'c', r:6, fill:'#F2CA50', stroke:'#33291C'},
+};
+function renderPlane(svg, st){
+  const [x0,x1,y0,y1] = st.view;
+  const W = st.W || 520, H = st.H || 300, pad = 14;
+  const s = Math.min((W-2*pad)/(x1-x0), (H-2*pad)/(y1-y0));
+  const ox = W/2 - s*(x0+x1)/2, oy = H/2 + s*(y0+y1)/2;
+  const tx = x => ox + s*x, ty = y => oy - s*y;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let g = '';
+  const range = Math.max(x1-x0, y1-y0);
+  const step = range<=14?1: range<=30?2:5;
+  const lab = range<=14?2: step;
+  const xa = Math.ceil((0-ox)/s), xb = Math.floor((W-ox)/s);
+  const ya = Math.ceil((oy-H)/s), yb = Math.floor(oy/s);
+  for(let i=Math.ceil(xa/step)*step;i<=xb;i+=step) g += `<line x1="${tx(i)}" y1="0" x2="${tx(i)}" y2="${H}" stroke="${T.acc}" stroke-opacity=".13"/>`;
+  for(let j=Math.ceil(ya/step)*step;j<=yb;j+=step) g += `<line x1="0" y1="${ty(j)}" x2="${W}" y2="${ty(j)}" stroke="${T.acc}" stroke-opacity=".13"/>`;
+  g += `<line x1="0" y1="${ty(0)}" x2="${W}" y2="${ty(0)}" stroke="#33291C" stroke-opacity=".45" stroke-width="1.2"/>`;
+  g += `<line x1="${tx(0)}" y1="0" x2="${tx(0)}" y2="${H}" stroke="#33291C" stroke-opacity=".45" stroke-width="1.2"/>`;
+  for(let i=Math.ceil(xa/lab)*lab;i<=xb;i+=lab) if(i!==0) g += `<text x="${tx(i)}" y="${ty(0)+13}" font-size="10" fill="#9c8f78" text-anchor="middle" font-family="Nunito Sans">${neg(i)}</text>`;
+  for(let j=Math.ceil(ya/lab)*lab;j<=yb;j+=lab) if(j!==0) g += `<text x="${tx(0)-5}" y="${ty(j)+3.5}" font-size="10" fill="#9c8f78" text-anchor="end" font-family="Nunito Sans">${neg(j)}</text>`;
+  g += `<text x="${W-6}" y="${ty(0)-6}" font-size="13" font-weight="900" fill="#1F8585" text-anchor="end" font-family="Nunito">x</text>`;
+  g += `<text x="${tx(0)+7}" y="13" font-size="13" font-weight="900" fill="#D9A825" font-family="Nunito">y</text>`;
+
+  const e = st.ell;
+  if(e && e.mode){
+    const cp = curvePaths(e, st.view, tx, ty);
+    if(e.mode==='ghost') cp.forEach(c=> g += `<path d="${c.d}" fill="${c.closed?T.acc:'none'}" fill-opacity=".05" stroke="${c.aux?'#33291C':T.acc}" stroke-opacity="${c.aux?.25:.6}" stroke-width="2" stroke-dasharray="6 6"/>`);
+    else cp.forEach(c=> g += c.aux
+      ? `<path d="${c.d}" fill="none" stroke="#33291C" stroke-opacity=".3" stroke-width="1.5" stroke-dasharray="5 5"/>`
+      : `<path class="grow" pathLength="1" d="${c.d}" fill="${c.closed?T.acc:'none'}" fill-opacity=".09" stroke="${T.acc}" stroke-width="3" stroke-linecap="round" style="stroke-dasharray:1;stroke-dashoffset:${st.drawn?0:1};transition:stroke-dashoffset 1.4s ease"/>`);
+  }
+  (st.segs||[]).forEach(sg=>{
+    const col = sg.col || '#33291C';
+    g += `<line x1="${tx(sg.a[0])}" y1="${ty(sg.a[1])}" x2="${tx(sg.b[0])}" y2="${ty(sg.b[1])}" stroke="${col}" stroke-width="${sg.w||2.5}" ${sg.dash?'stroke-dasharray="5 5"':''} stroke-linecap="round" stroke-opacity="${sg.op||.85}"/>`;
+    if(sg.lab){ const mx=(tx(sg.a[0])+tx(sg.b[0]))/2 + (sg.lo?sg.lo[0]:0), my=(ty(sg.a[1])+ty(sg.b[1]))/2 + (sg.lo?sg.lo[1]:-8);
+      g += `<text x="${mx}" y="${my}" font-size="14" font-weight="900" fill="${col}" text-anchor="middle" font-family="Nunito" paint-order="stroke" stroke="#fff" stroke-width="4">${sg.lab}</text>`; }
+  });
+  (st.pts||[]).forEach(p=>{
+    const t = PT[p.t] || PT.P, X0=tx(p.x), Y0=ty(p.y);
+    const cls = p.fresh ? 'class="fresh"' : '';
+    if(t.shape==='d') g += `<rect ${cls} x="${X0-t.r}" y="${Y0-t.r}" width="${2*t.r}" height="${2*t.r}" transform="rotate(45 ${X0} ${Y0})" fill="${t.fill}" fill-opacity="${t.op||1}" ${p.faint?'opacity=".45"':''}/>`;
+    else g += `<circle ${cls} cx="${X0}" cy="${Y0}" r="${t.r}" fill="${t.fill}" stroke="${t.stroke}" stroke-width="2" ${p.faint?'opacity=".45"':''}/>`;
+    if(p.l){ const lo = p.lo || [0,-13];
+      const isI = v => Math.abs(v-Math.round(v))<1e-9;
+      const txt = p.l + (p.nc || !isI(p.x) || !isI(p.y) ? '' : `(${neg(p.x)}, ${neg(p.y)})`);
+      const anc = lo[0]<0?'end':lo[0]>0?'start':'middle';
+      g += `<text ${cls} x="${X0+lo[0]}" y="${Y0+lo[1]}" font-size="13" font-weight="800" fill="#33291C" font-family="Nunito" text-anchor="${anc}" paint-order="stroke" stroke="#fff" stroke-width="4" ${p.faint?'opacity=".6"':''}>${txt}</text>`; }
+  });
+  svg.innerHTML = g + `<style>.fresh{animation:pp .6s ease} @keyframes pp{0%{opacity:0}50%{opacity:1}}</style>`;
+  const grs = svg.querySelectorAll('.grow');
+  if(grs.length && !st.drawn){ requestAnimationFrame(()=>requestAnimationFrame(()=>{ grs.forEach(gr=>gr.style.strokeDashoffset=0); })); st.drawn = true; }
+  (st.pts||[]).forEach(p=>p.fresh=false);
+}
+
+
+/* Curvas que sabe dibujar el plano. Cada una es un objeto con type:
+   line      {type:'line', m, b}  ó  {type:'line', x:c} (vertical)
+   circle    {type:'circle', h, k, r2}
+   ellipse   {type:'ellipse', h, k, a2, b2, v}        (v = eje mayor vertical)
+   parabola  {type:'parabola', h, k, p, v}            (v: (x−h)² = 4p(y−k) · si no: (y−k)² = 4p(x−h))
+   hyperbola {type:'hyperbola', h, k, a2, b2, v}      (v = eje transverso vertical; dibuja asíntotas)  */
+function curvePaths(e, view, tx, ty){
+  const [x0,x1,y0,y1] = view, mx=(x1-x0)*.6, my=(y1-y0)*.6;
+  const inV = (x,y)=> x>x0-mx && x<x1+mx && y>y0-my && y<y1+my;
+  const P = pts => pts.map((p,i)=>`${i?'L':'M'}${tx(p[0]).toFixed(1)} ${ty(p[1]).toFixed(1)}`).join(' ');
+  const type = e.type || 'ellipse', N = 240, out = [];
+  if(type==='ellipse' || type==='circle'){
+    const rx = type==='circle'? Math.sqrt(e.r2) : Math.sqrt(e.v? e.b2 : e.a2);
+    const ry = type==='circle'? Math.sqrt(e.r2) : Math.sqrt(e.v? e.a2 : e.b2);
+    const pts=[]; for(let i=0;i<=N;i++){ const t=2*Math.PI*i/N; pts.push([e.h+rx*Math.cos(t), e.k+ry*Math.sin(t)]); }
+    out.push({d:P(pts)+' Z', closed:true});
+  } else if(type==='parabola'){
+    const pts=[]; const span = Math.max(x1-x0,y1-y0)*1.2;
+    for(let i=0;i<=N;i++){ const u = -span + 2*span*i/N; const w = u*u/(4*e.p);
+      const p = e.v? [e.h+u, e.k+w] : [e.h+w, e.k+u]; if(inV(p[0],p[1])) pts.push(p); }
+    out.push({d:P(pts)});
+  } else if(type==='hyperbola'){
+    const a=Math.sqrt(e.a2), b=Math.sqrt(e.b2), T0 = 3.2;
+    [1,-1].forEach(sg=>{ const pts=[]; for(let i=0;i<=N;i++){ const t=-T0+2*T0*i/N;
+        const p = e.v? [e.h+b*Math.sinh(t), e.k+sg*a*Math.cosh(t)] : [e.h+sg*a*Math.cosh(t), e.k+b*Math.sinh(t)];
+        if(inV(p[0],p[1])) pts.push(p); } out.push({d:P(pts)}); });
+    const m = e.v? a/b : b/a, L = Math.max(x1-x0,y1-y0);
+    if(!e.noAsym) [m,-m].forEach(mm=> out.push({aux:true, d:P([[e.h-L, e.k-mm*L],[e.h+L, e.k+mm*L]])}));
+  } else if(type==='line'){
+    if(e.x!=null) out.push({d:P([[e.x,y0-my],[e.x,y1+my]])});
+    else out.push({d:P([[x0-mx, e.m*(x0-mx)+e.b],[x1+mx, e.m*(x1+mx)+e.b]])});
+  }
+  return out;
+}
+/* Puntos notables de cada curva (se muestran tenues al terminar un problema) */
+function elementsOf(e){
+  const type = e.type || 'ellipse', pts = [];
+  if(type==='ellipse' || type==='hyperbola'){
+    const a=Math.sqrt(e.a2), b=Math.sqrt(e.b2), c=Math.sqrt(type==='ellipse'? e.a2-e.b2 : e.a2+e.b2);
+    const along = d => e.v? [e.h, e.k+d] : [e.h+d, e.k], across = d => e.v? [e.h+d, e.k] : [e.h, e.k+d];
+    pts.push([...along(a),'V'],[...along(-a),'V'],[...along(c),'F'],[...along(-c),'F'],[e.h,e.k,'C']);
+    if(type==='ellipse') pts.push([...across(b),'B'],[...across(-b),'B']);
+  } else if(type==='circle') pts.push([e.h,e.k,'C']);
+  else if(type==='parabola') pts.push([e.h,e.k,'V'], e.v? [e.h,e.k+e.p,'F'] : [e.h+e.p,e.k,'F']);
+  return pts;
+}
+/* =========================================================
+   MASCOTA: Gea, la montaña del mundo de las Formas
+   ========================================================= */
+function mountain(mood='happy', size=80){
+  const body = 'M11 89 L47.5 16 Q50 12 52.5 16 L91 89 Z';
+  const eye = (x)=>{
+    if(mood==='joy') return `<path d="M${x-4} 59 Q${x} 54 ${x+4} 59" stroke="#33291C" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+    if(mood==='wink' && x>50) return `<path d="M${x-4} 58 Q${x} 61 ${x+4} 58" stroke="#33291C" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+    const dy = mood==='think' ? -2 : 0;
+    return `<ellipse cx="${x}" cy="${58+dy}" rx="3.4" ry="4.2" fill="#33291C"/><circle cx="${x+1.2}" cy="${56.3+dy}" r="1.2" fill="#fff"/>`;
+  };
+  const mouth = mood==='joy' ? '<path d="M43 66 Q50 76 57 66 Z" fill="#8C3A12"/>'
+    : mood==='think' ? '<ellipse cx="51" cy="68" rx="2.6" ry="2.2" fill="#8C3A12"/>'
+    : '<path d="M44.5 66 Q50 71.5 55.5 66" stroke="#33291C" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  return `<svg class="mtn" viewBox="0 0 102 92" role="img" aria-label="Gea" width="${size}" height="${size*92/102}" aria-hidden="true"><g class="br">
+    <g class="mfill">
+      <path d="M2 89 L28.5 44 L55 89 Z" fill="#F7A374"/>
+      <path d="${body}" fill="#F2762E"/>
+      <path d="M38.5 34 L47.5 16 Q50 12 52.5 16 L62 35 L56.5 30.5 L50.5 37 L44.5 30.5 Z" fill="#fff"/>
+      <ellipse cx="37" cy="66" rx="4.5" ry="2.6" fill="#FFC2A3" opacity=".9"/><ellipse cx="65" cy="66" rx="4.5" ry="2.6" fill="#FFC2A3" opacity=".9"/>
+      ${eye(43)}${eye(58)}${mouth}
+    </g>
+    <path class="mdraw" pathLength="1" d="${body}" fill="none" stroke="#B5501A" stroke-width="3" stroke-linejoin="miter" stroke-miterlimit="6"/>
+  </g></svg>`;
+}
+function say(text, mood='happy', size=56){ return `<div class="say">${mountain(mood,size)}<div class="bub">${text}</div></div>`; }
+
+
+/* =========================================================
+   FONDO: el mundo de las Montañas de las Formas (siempre naranja,
+   no cambia con el tema) · cordilleras + villa griega, muy tenue
+   ========================================================= */
+function backdropSVG(){
+  const O='#EBCDAE', L='#F3E0CA', D='#D9B48F'; // naranja del mundo, aclarado hacia crema
+  const peak = (x,base,w,hgt,fill,snow=true) => {
+    const top=base-hgt, s=hgt*.22;
+    let g = `<path d="M${x-w/2} ${base} L${x} ${top} L${x+w/2} ${base} Z" fill="${fill}"/>`;
+    g += `<g stroke="${D}" stroke-width="2.5" opacity=".45">${[.35,.5,.65].map(f=>{ const px=x+w/2*f*.55, py=top+hgt*f; return `<line x1="${px}" y1="${py}" x2="${px+22}" y2="${py-18}"/>`; }).join('')}</g>`;
+    return g;
+  };
+  const house = (x,y,w,hh,dome) => `<rect x="${x}" y="${y-hh}" width="${w}" height="${hh}" fill="${D}"/>`
+    + (dome ? `<path d="M${x+w*.15} ${y-hh} A${w*.35} ${w*.35} 0 0 1 ${x+w*.85} ${y-hh} Z" fill="${O}"/><line x1="${x+w/2}" y1="${y-hh-w*.35}" x2="${x+w/2}" y2="${y-hh-w*.35-12}" stroke="${D}" stroke-width="2"/>` : '')
+    + `<rect x="${x+w*.38}" y="${y-hh*.45}" width="${w*.24}" height="${hh*.45}" fill="${L}"/>`;
+  const temple = (x,y) => { let g=`<path d="M${x-10} ${y-92} L${x+90} ${y-122} L${x+190} ${y-92} Z" fill="${D}"/><rect x="${x-6}" y="${y-92}" width="192" height="10" fill="${D}"/>`;
+    for(let i=0;i<7;i++) g += `<rect x="${x+2+i*28}" y="${y-82}" width="10" height="72" fill="${D}"/>`;
+    return g + `<rect x="${x-10}" y="${y-10}" width="200" height="10" fill="${D}"/>`; };
+  const cypress = (x,y,hh) => `<path d="M${x} ${y} L${x-9} ${y-hh*.35} L${x} ${y-hh} L${x+9} ${y-hh*.35} Z" fill="${D}"/>`;
+  return `<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" width="100%" height="100%">
+    <circle cx="1130" cy="250" r="90" fill="${L}"/>
+    <g opacity=".55">${[[90,640,420,260],[420,650,380,200],[1000,640,460,300],[1340,650,420,240]].map(p=>peak(p[0],p[1]+260,p[2],p[3]+260,L,false)).join('')}</g>
+    ${[[230,900,620,520],[700,900,560,430],[1180,900,660,560]].map(p=>peak(...p,O)).join('')}
+    <path d="M0 900 L0 760 L300 700 L560 735 L760 690 L1000 740 L1440 690 L1440 900 Z" fill="${L}"/>
+    <g>${temple(860,700)}${house(560,742,46,40,true)}${house(612,742,38,30,false)}${house(656,742,52,46,true)}${house(714,742,40,34,false)}${house(1080,742,44,36,true)}${house(1130,742,36,28,false)}
+      ${cypress(540,742,90)}${cypress(1176,742,80)}${cypress(1192,742,62)}${cypress(1060,742,70)}</g>
+    <path d="M0 900 L0 800 L380 760 L720 790 L1100 750 L1440 790 L1440 900 Z" fill="${O}" opacity=".7"/>
+  </svg>`;
+}
+
+/* ╔═ 3 · CONTENIDO DE ESTA HERRAMIENTA ═╗ */
+/* =========================================================
+   CONTENIDO · LA HIPÉRBOLA
+   ========================================================= */
+const hIcon = v => `<svg width="64" height="40" viewBox="0 0 64 40">${v
+  ? `<path d="M14 4 Q32 26 50 4 M14 36 Q32 14 50 36" fill="none" stroke="${T.acc}" stroke-width="3" stroke-linecap="round"/>`
+  : `<path d="M6 4 Q26 20 6 36 M58 4 Q38 20 58 36" fill="none" stroke="${T.acc}" stroke-width="3" stroke-linecap="round"/>`}</svg>`;
+const TOOL = { id:'hiperbola', title:'La hipérbola', introLabel:'La hipérbola', curveName:'la hipérbola', subtitle:'Geometría analítica · 11°',
+  iconH: hIcon(false), iconV: hIcon(true) };
+const MISSION = [ {k:'orient', l:'Orientación'}, {k:'centro', l:'Centro'}, {k:'a', l:'a'}, {k:'b', l:'b'} ];
+// Orden por dificultad (número de la guía: 3, 2, 1 · 10, 9, 4, 8 · 12, 7, 6, 11, 5)
+const ORDER = ['G3','G2','G1','G10','G9','G4','G8','G12','G7','G6','G11','G5'];
+const LEVELS = [ {name:'Básico', to:2}, {name:'Intermedio', to:6}, {name:'Avanzado', to:11} ];
+const SUMMARY = {
+  say:'¡Recorriste toda la hipérbola! Este es tu mapa.',
+  rows:[['C y V','a = distancia CV'],['C y F','c = distancia CF'],['a, b y c','c² = a² + b² (c es el mayor)'],
+    ['Asíntotas','horizontal: ±b/a · vertical: ±a/b'],['Cruce de las asíntotas','es el centro'],['Excentricidad','e = c/a (siempre mayor que 1)'],
+    ['Lado recto','LR = 2b²/a'],['Un punto','reemplazar en x y y'],['Forma general','agrupar y completar cuadrados (¡ojo con el signo −!)']],
+  close:'Siempre buscas lo mismo: orientación, centro, a y b.' };
+
+/* ---- ecuaciones ---- */
+const eqH = (hh,kk,a2,b2,v) => v ? `${fr(par(Y,kk),a2)} − ${fr(par(X,hh),b2)} = 1` : `${fr(par(X,hh),a2)} − ${fr(par(Y,kk),b2)} = 1`;
+function examDefault(def){
+  const e = def.ell;
+  return [ orientStep(def,true), { t:'exam', fields:[
+    {m:`Centro &nbsp;(${blank('h')} , ${blank('k')})`, ids:{h:e.h,k:e.k}, chk:()=>['centro',`(${neg(e.h)}, ${neg(e.k)})`]},
+    {m:`a² = ${blank('a2')}`, ids:{a2:e.a2}, chk:()=>['a',`a² = ${e.a2L||e.a2}`]},
+    {m:`b² = ${blank('b2')}`, ids:{b2:e.b2}, chk:()=>['b',`b² = ${e.b2L||e.b2}`]},
+    ...(def.examExtra||[]) ] } ];
+}
+function EXAM_STEPS(def){ return def.examSteps ? def.examSteps() : examDefault(def); }
+/* armar la ecuación (arrastrar): a² va con el término POSITIVO */
+function buildH(e, extra=[]){
+  const first = e.v ? Y : X, second = e.v ? X : Y, s1 = e.v ? 'k' : 'h', s2 = e.v ? 'h' : 'k';
+  return { t:'drag', isBuild:true,
+    lead:`<h4>Arma la ecuación</h4><p>Plantilla ${e.v?'vertical':'horizontal'}: el término positivo es el de ${first}, y ahí va a².</p>`,
+    m:`${fr(sq(`(${first} − ${slot(s1)})`), slot('a2'))} − ${fr(sq(`(${second} − ${slot(s2)})`), slot('b2'))} = 1`,
+    slots:{h:'h',k:'k',a2:'a2',b2:'b2'},
+    chips:[ {id:'h',label:`h = ${neg(e.h)}`,val:neg(e.h)}, {id:'k',label:`k = ${neg(e.k)}`,val:neg(e.k)},
+            {id:'a2',label:`a² = ${e.a2L||e.a2}`,val:e.a2L||e.a2}, {id:'b2',label:`b² = ${e.b2L||e.b2}`,val:e.b2L||e.b2}, ...extra ],
+    hint:'Revisa la misión: ¿qué va en esa casilla?',
+    after:()=>`<p class="note">Simplificando signos:</p>${M(eqH(e.h,e.k,e.a2L||e.a2,e.b2L||e.b2,e.v),'big')}`,
+    done:A=>A.solid() };
+}
+const cDist = (txt, val, done) => ({ t:'input', m:`c = ${txt} = ${blank('c')}`, ans:{c:val}, okMsg:`<b>¡Bien!</b> c = ${val}`, done });
+const bFromAC = (a2, c2, b2, done) => [
+  { t:'mc', q:'Tengo a y c. ¿Cómo saco b?', opts:[
+    {h:'c² = a² + b² → b² = c² − a²', ok:true, fb:'<b>¡Exacto!</b> En la hipérbola, c es el mayor de los tres (al revés que en la elipse).'},
+    {h:'a² = b² + c² → b² = a² − c²', fb:'Esa es la relación de la elipse. En la hipérbola los focos están más lejos que los vértices.'},
+    {h:'b = c − a', fb:'Se relacionan con cuadrados, como Pitágoras.'} ] },
+  { t:'input', m:`b² = c² − a² = ${c2} − ${a2} = ${blank('b2')}`, ans:{b2}, okMsg:`<b>¡La última pista!</b> b² = ${b2}`, done } ];
+
+/* =========================================================
+   VIDEO (las partes se acumulan sobre la misma hipérbola)
+   ========================================================= */
+const VH = [-6.5,6.5,-4.5,4.5], HA=3, HB=2, HC=Math.sqrt(13);
+const HYP = {type:'hyperbola', h:0, k:0, a2:9, b2:4, v:false};
+const RECT = [[-HA,-HB],[HA,-HB],[HA,HB],[-HA,HB]];
+function hState(keys, fresh=[], extra={}){
+  const K=new Set(keys), N=new Set(fresh), pts=[], segs=[];
+  const P = (x,y,t,l,lo,k) => pts.push({x,y,t,l,nc:true,lo,fresh:N.has(k)});
+  if(K.has('C')) P(0,0,'C','C(h, k)',[-10,-10],'C');
+  if(K.has('real')){ segs.push({a:[-HA,0],b:[HA,0],col:T.acc,w:5,op:.35}); P(-HA,0,'V','V′',[-10,-10],'real'); P(HA,0,'V','V',[10,-10],'real'); segs.push({a:[0,-.55],b:[HA,-.55],lab:'a',col:T.deep,w:2.5,lo:[0,16]}); }
+  if(K.has('imag')){ segs.push({a:[0,-HB],b:[0,HB],col:T.deep,w:3,dash:true,op:.6}); P(0,HB,'B','B',[12,-6],'imag'); P(0,-HB,'B','B′',[12,14],'imag'); segs.push({a:[-.45,0],b:[-.45,HB],lab:'b',col:T.deep,w:2.5,lo:[-12,0]});
+    RECT.forEach((p,i)=>segs.push({a:p,b:RECT[(i+1)%4],col:'#9AA3B2',w:1.5,dash:true})); }
+  if(K.has('F')){ P(-HC,0,'F','F′',[0,22],'F'); P(HC,0,'F','F',[0,22],'F'); segs.push({a:[0,0],b:[HA,HB],lab:'c',col:'#33291C',w:2.5,lo:[-8,-8]}); }
+  if(K.has('lr')){ const L=HB*HB/HA; [-HC,HC].forEach(x=>segs.push({a:[x,-L],b:[x,L],col:T.deep,w:2.5,dash:true})); }
+  return { view:VH, H:300, pts, segs, ell:{...HYP, mode:'solid', noAsym:!K.has('asin')}, drawn: !N.has('curve'), ...extra };
+}
+const hp = (sl, st) => renderPlane($('svg.mp-demo',sl), st);
+const H1K=['C'], H2K=[...H1K,'real'], H3K=[...H2K,'imag'], H4K=[...H3K,'asin'], H5K=[...H4K,'F'], H6K=[...H5K,'lr'];
+const SVGP = `<svg class="mp-demo" style="width:100%"></svg>`;
+const SLIDES = [
+  { t:'Esto es una hipérbola.', m:'happy', s:'Dos ramas que se abren en direcciones opuestas… y nunca se tocan.',
+    art:SVGP, init(sl){ hp(sl, {...hState([],['curve']), segs:[], pts:[]}); } },
+  { t:'Se abre a los lados… o hacia arriba y abajo.', m:'wink', s:'Horizontal o vertical: depende de hacia dónde se abren sus ramas.',
+    art:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%"><div style="text-align:center"><svg class="mpa mp-demo" style="width:100%"></svg><div class="tag" style="color:var(--tp)">Horizontal</div></div><div style="text-align:center"><svg class="mpb mp-demo" style="width:100%"></svg><div class="tag" style="color:var(--tp)">Vertical</div></div></div>`,
+    init(sl){ renderPlane($('svg.mpa',sl), {view:[-5,5,-5,5], W:260, H:260, pts:[], segs:[], ell:{type:'hyperbola',h:0,k:0,a2:4,b2:4,v:false,mode:'solid',noAsym:true}});
+              renderPlane($('svg.mpb',sl), {view:[-5,5,-5,5], W:260, H:260, pts:[], segs:[], ell:{type:'hyperbola',h:0,k:0,a2:4,b2:4,v:true,mode:'solid',noAsym:true}}); } },
+  { t:'1 · El centro', m:'happy', s:'Justo en medio de las dos ramas. Lo llamamos C(h, k).',
+    art:SVGP, init(sl){ hp(sl, hState(H1K,['C'])); } },
+  { t:'2 · El eje real', m:'happy', s:'Une los dos vértices V y V′ y mide 2a. Así que a va del centro a un vértice.',
+    art:SVGP, init(sl){ hp(sl, hState(H2K,['real'])); } },
+  { t:'3 · El eje imaginario', m:'think', s:'Mide 2b y es perpendicular al real. Sus extremos B y B′ NO están en la curva: son puntos imaginarios que sirven para armar un rectángulo guía.',
+    art:SVGP, init(sl){ hp(sl, hState(H3K,['imag'])); } },
+  { t:'4 · Las asíntotas', m:'happy', s:'Las diagonales del rectángulo. Las ramas se acercan a ellas sin tocarlas nunca.',
+    art:SVGP, init(sl){ hp(sl, hState(H4K,['asin'])); },
+    foot:`<span class="m" style="font-size:20px"><span class="ln">pendientes: ±${fr('b','a')} (horizontal) · ±${fr('a','b')} (vertical)</span></span>` },
+  { t:'5 · Los focos', m:'think', s:'Viven dentro de cada rama, más lejos que los vértices. Del centro a la esquina del rectángulo mide c.',
+    art:SVGP, init(sl){ hp(sl, hState(H5K,['F'])); },
+    foot:'¡Al revés que la elipse! <b style="font-size:20px;white-space:nowrap">c² = a² + b²</b>' },
+  { t:'6 · Lado recto y excentricidad', m:'happy', s:'El lado recto pasa por cada foco. La excentricidad dice qué tan abiertas están las ramas.',
+    art:SVGP, init(sl){ hp(sl, hState(H6K,['lr'])); },
+    foot:`<span class="m" style="font-size:20px"><span class="ln">LR = ${fr('2b²','a')} &nbsp;·&nbsp; e = ${fr('c','a')} &gt; 1</span></span>` },
+  { t:'¿Y cómo encuentro b?', m:'think', s:'Como B y B′ no están en la curva, b casi nunca se mide: se calcula con otra pista. Estas son las 4 rutas:',
+    art:`<div style="width:100%">${[['Con c (focos)','b² = c² − a²'],['Con una asíntota','pendiente = b/a (horizontal) · a/b (vertical)'],['Con el lado recto','LR = 2b²/a → b² = a·LR/2'],['Con un punto de la curva','se reemplaza en la ecuación y se despeja']].map((r,i)=>`<div class="sumrow rv" style="--d:${.2+.25*i}s"><b>${r[0]}</b><span>${r[1]}</span></div>`).join('')}</div>`,
+    foot:'Ejemplo: a = 3 y c = 5 → b² = 25 − 9 = 16 → <b>b = 4</b>' },
+  { t:'¿Dónde va a²?', m:'happy', s:'En la hipérbola, a² va con el término POSITIVO. ¡No importa si es el número más grande!',
+    art:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;text-align:center">
+      <div>${hIcon(false)}<div class="tag" style="color:var(--tp)">Horizontal</div><span class="m rv" style="--d:.4s;font-size:19px"><span class="ln">${fr(sq(`(${X} − h)`),'<span class="hl">a²</span>')} − ${fr(sq(`(${Y} − k)`),'b²')} = 1</span></span><div class="rv" style="--d:.8s;font-size:14px">Positivo el de <b class="vx">x</b> → se abre a los lados</div></div>
+      <div>${hIcon(true)}<div class="tag" style="color:var(--tp)">Vertical</div><span class="m rv" style="--d:1.2s;font-size:19px"><span class="ln">${fr(sq(`(${Y} − k)`),'<span class="hl">a²</span>')} − ${fr(sq(`(${X} − h)`),'b²')} = 1</span></span><div class="rv" style="--d:1.6s;font-size:14px">Positivo el de <b class="vy">y</b> → se abre arriba y abajo</div></div></div>`,
+    foot:'Ejemplo: en <b>x²/4 − y²/9 = 1</b>, a² = 4 (aunque 9 sea mayor).' },
+  { t:'Elipse vs. hipérbola', m:'wink', s:'Se parecen mucho… pero tienen tres diferencias clave:',
+    art:`<div style="width:100%"><table class="cmp"><tr><th></th><th>Elipse</th><th>Hipérbola</th></tr>
+      ${[['Signo del medio','+','−'],['Relación','a² = b² + c²','c² = a² + b²'],['Excentricidad','e < 1','e > 1'],['a² va…','con el mayor','con el positivo']].map((r,i)=>`<tr class="rv" style="--d:${.2+.2*i}s"><td><b>${r[0]}</b></td><td>${r[1]}</td><td style="color:var(--tp)">${r[2]}</td></tr>`).join('')}</table></div>` },
+  { t:'Siempre buscamos 4 pistas.', m:'joy', s:'Igual que en la elipse: orientación, centro, a y b. Todo lo demás son pistas para encontrarlas. ¡Vamos!',
+    art:`<div style="width:100%"><div class="mission4">
+      <div class="rv" style="--d:.2s"><i></i><span>Orientación<small>hacia dónde se abre</small></span></div>
+      <div class="rv" style="--d:.5s"><i></i><span>Centro (h, k)<small>el punto medio</small></span></div>
+      <div class="rv" style="--d:.8s"><i></i><span>a<small>semieje real</small></span></div>
+      <div class="rv" style="--d:1.1s"><i></i><span>b<small>semieje imaginario</small></span></div></div>
+      <button class="cta rv" style="--d:1.5s" data-practicar>¡A practicar!</button></div>` },
+];
+
+/* =========================================================
+   PROBLEMAS (de más fácil a más difícil)
+   ========================================================= */
+
+/* =========================================================
+   PROBLEMAS · Guía de estudio de la hipérbola (12 problemas)
+   ========================================================= */
+const PROBLEMS = {};
+const orientMsg = (ans, lead, why, nope) => ({ ans, lead, why, nope });
+const genStep = (m, ans, okMsg='<b>¡Ecuación general!</b>') => ({ t:'input', lead:'<h4>Ecuación general</h4>', m, ans, okMsg });
+const tbl = rows => `<div class="eltab">${rows.map(r=>`<div><b>${r[0]}</b><span>${r[1]}</span></div>`).join('')}</div>`;
+const lrStep = (aTxt, lrTxt, lrVal, b2, done) => [
+  { t:'mc', q:'¿Cómo uso el lado recto?', opts:[
+    {h:'LR = 2b²/a → como ya tengo a, despejo b²', ok:true, fb:'<b>¡Eso!</b>'}, {h:'LR = 2a', fb:'2a es el eje real.'}, {h:'LR = 2c', fb:'2c es la distancia entre focos.'} ] },
+  { t:'input', m:`${lrTxt} = ${fr('2b²',aTxt)} &nbsp;→&nbsp; b² = ${blank('b2')}`, ans:{b2}, hint:`Multiplica en cruz: b² = ${aTxt} · ${lrTxt} ÷ 2`, okMsg:`<b>¡La última pista!</b> b² = ${b2}`, done } ];
+
+/* ---------- 1 · Básico · guía #3 · C, vértice y semieje imaginario ---------- */
+PROBLEMS.G3 = { guia:3,
+  view:[-6,12,-8,10], H:320, ell:{type:'hyperbola',h:3,k:1,a2:36,b2:16,v:true},
+  answer:eqH(3,1,36,16,true), recap:'C y V → a. El semieje imaginario ES b. ¡Las 4 pistas casi directas!',
+  enun:'Determina la ecuación estándar de la hipérbola con {0}, un vértice del eje real {1} y {2}.',
+  datos:[ {lab:'C(3, 1)', pts:[{x:3,y:1,t:'C',l:'C',lo:[14,4]}], check:['centro','(3, 1)']},
+          {lab:'(3, 7)', pts:[{x:3,y:7,t:'V',l:'V',lo:[14,4]}], bank:'V(3, 7)'},
+          {lab:'semieje imaginario 4', kind:'m', bank:'semieje imaginario = 4'} ],
+  orient:orientMsg('v','El vértice está justo arriba del centro.','C y V están en x = 3: el eje real es vertical, se abre arriba y abajo.','Mira: C y V tienen la misma x.'),
+  steps:[
+    { t:'mc', q:'¿Cómo encuentro a?', opts:[
+      {h:'Distancia del centro al vértice', ok:true, fb:'<b>¡Exacto!</b>'}, {h:'Es el semieje imaginario', fb:'Ese es b.'}, {h:'Distancia del vértice al origen', fb:'El origen no tiene nada que ver aquí.'} ] },
+    { t:'input', m:`a = |7 − 1| = ${blank('a')}`, ans:{a:6}, done:A=>{ A.seg([3,1],[3,7],'a',T.deep,{lo:[12,0]}); A.check('a','a = 6 · a² = 36'); } },
+    { t:'mc', q:'Y el “semieje imaginario 4”… ¿qué pista es?', opts:[
+      {h:'Es b directamente: b = 4', ok:true, fb:'<b>¡Sí!</b> Semieje = la mitad del eje. Semieje imaginario = b.'},
+      {h:'Es 2b, así que b = 2', fb:'“Semi” significa mitad: ya es b, no 2b.'}, {h:'Es c', fb:'c es la distancia a los focos.'} ],
+      done:A=>A.check('b','b = 4 · b² = 16') },
+    buildH({h:3,k:1,a2:36,b2:16,v:true},[{id:'aa',label:'a = 6',val:'6',hint:'En el denominador va a², no a.'},{id:'bb',label:'b = 4',val:'4',hint:'En el denominador va b², no b.'}]),
+  ] };
+
+/* ---------- 2 · Básico · guía #2 · vértices y excentricidad ---------- */
+PROBLEMS.G2 = { guia:2,
+  view:[-6,26,-14,8], ell:{type:'hyperbola',h:10,k:-3,a2:64,b2:36,v:false},
+  answer:eqH(10,-3,64,36,false), recap:'V y V′ → centro y a. e = c/a → c. c² = a² + b² → b.',
+  enun:'Determina la ecuación estándar de la hipérbola con {0}, {1} y {2}.',
+  datos:[ {lab:'V(2, −3)', pts:[{x:2,y:-3,t:'V',l:'V′',lo:[-12,-10]}], bank:'V′(2, −3)'}, {lab:'V(18, −3)', pts:[{x:18,y:-3,t:'V',l:'V',lo:[12,-10]}], bank:'V(18, −3)'},
+          {lab:'excentricidad 5/4', kind:'m', bank:'e = 5/4'} ],
+  orient:orientMsg('h','Los vértices están a la misma altura.','Están en y = −3: se abre a los lados.','Los dos vértices tienen la misma y…'),
+  steps:[
+    { t:'input', lead:'<h4>Centro: punto medio de los vértices</h4>', m:`C = (${fr('2 + 18','2')} , ${fr('−3 + (−3)','2')}) = (${blank('h')} , ${blank('k')})`, ans:{h:10,k:-3},
+      done:A=>{ A.pt(10,-3,'C','C',[0,22]); A.check('centro','(10, −3)'); } },
+    { t:'input', m:`2a = |18 − 2| = ${blank('d')} &nbsp;→&nbsp; a = ${blank('a')}`, ans:{d:16,a:8}, done:A=>A.check('a','a = 8 · a² = 64') },
+    { t:'mc', q:'¿Qué me dice la excentricidad?', opts:[
+      {h:'e = c/a → c = e · a', ok:true, fb:'<b>¡Sí!</b> Como ya tengo a, sale c.'}, {h:'e = a/c', fb:'Al revés: e = c/a.'}, {h:'e = b/a', fb:'b/a es la pendiente de las asíntotas (horizontal).'} ] },
+    { t:'input', m:`c = ${fr('5','4')} · 8 = ${blank('c')}`, ans:{c:10}, done:A=>A.bank('c = 10') },
+    ...bFromAC(64,100,36, A=>A.check('b','b = 6 · b² = 36')),
+    buildH({h:10,k:-3,a2:64,b2:36,v:false},[{id:'c2',label:'c² = 100',val:'100',hint:'c² no va en la ecuación.'}]),
+  ] };
+
+/* ---------- 3 · Básico · guía #1 · focos y eje real (¡con un dato imposible!) ---------- */
+PROBLEMS.G1 = { guia:1,
+  view:[-4,14,-4,14], H:320, ell:{type:'hyperbola',h:5,k:5,a2:9,b2:7,v:false},
+  answer:eqH(5,5,9,7,false), recap:'Siempre revisa a < c. Con eje real 8 no existe la hipérbola; con eje real 6 sí.',
+  enun:'Determina la ecuación estándar de la hipérbola con focos {0} y {1}, y {2}.',
+  datos:[ {lab:'F(1, 5)', pts:[{x:1,y:5,t:'F',l:'F′',lo:[0,22]}], bank:'F′(1, 5)'}, {lab:'F(9, 5)', pts:[{x:9,y:5,t:'F',l:'F',lo:[0,22]}], bank:'F(9, 5)'},
+          {lab:'eje real 8', kind:'m', bank:'2a = 8'} ],
+  orient:orientMsg('h','Los focos están a la misma altura.','Están en y = 5: se abre a los lados.','Los focos tienen la misma y…'),
+  examSteps:()=>[ { t:'info', html:'<div class="stop"><b>Ojo:</b> con eje real 8 tendríamos a = c y no existe la hipérbola. Resuélvelo con <b>eje real 6</b>.</div>' }, ...examDefault(PROBLEMS.G1) ],
+  steps:[
+    { t:'input', lead:'<h4>Centro: punto medio de los focos</h4>', m:`C = (${fr('1 + 9','2')} , ${fr('5 + 5','2')}) = (${blank('h')} , ${blank('k')})`, ans:{h:5,k:5},
+      done:A=>{ A.pt(5,5,'C','C',[0,-14]); A.check('centro','(5, 5)'); } },
+    cDist('|9 − 5|', 4, A=>A.bank('c = 4')),
+    { t:'input', m:`2a = 8 &nbsp;→&nbsp; a = ${blank('a')}`, ans:{a:4} },
+    { t:'mc', q:'Compara a y c. ¿Qué notas?', opts:[
+      {h:'a = c, entonces b² = c² − a² = 0: ¡no existe la hipérbola!', ok:true, fb:'<b>¡Gran ojo!</b> En la hipérbola los vértices están entre el centro y los focos: a < c siempre. Ese dato de la guía tiene un error.'},
+      {h:'Todo bien, sigo con b² = c² − a²', fb:'Calcula: b² = 16 − 16 = 0… ¿puede b valer 0?'},
+      {h:'Uso a² = b² + c²', fb:'Esa es la relación de la elipse.'} ] },
+    { t:'info', html:'<div class="stop"><b>Para practicar, corregimos el dato: eje real 6.</b> Así a = 3 < c = 4 y la hipérbola sí existe. (Pregúntale al profe cuál era el valor correcto.)</div>' },
+    { t:'input', m:`2a = 6 &nbsp;→&nbsp; a = ${blank('a')}`, ans:{a:3}, done:A=>A.check('a','a = 3 · a² = 9') },
+    { t:'input', m:`b² = c² − a² = 16 − 9 = ${blank('b2')}`, ans:{b2:7}, done:A=>A.check('b','b² = 7') },
+    buildH({h:5,k:5,a2:9,b2:7,v:false},[{id:'d16',label:'a² = 16',val:'16',hint:'16 era con el dato imposible (a = 4).'}]),
+  ] };
+
+/* ---------- 4 · Intermedio · guía #10 · C, V′ y una asíntota ---------- */
+PROBLEMS.G10 = { guia:10,
+  view:[-14,4,-4,10], ell:{type:'hyperbola',h:-5,k:3,a2:16,b2:4,v:false}, keepSegs:true,
+  answer:eqH(-5,3,16,4,false), recap:'C y V′ → a. La pendiente de la asíntota (horizontal: b/a) → b.',
+  enun:'Determina la ecuación estándar de la hipérbola con {0}, {1} y asíntota {2}.',
+  datos:[ {lab:'C(−5, 3)', pts:[{x:-5,y:3,t:'C',l:'C',lo:[0,22]}], check:['centro','(−5, 3)']},
+          {lab:'V′(−9, 3)', pts:[{x:-9,y:3,t:'V',l:'V′',lo:[-12,-10]}], bank:'V′(−9, 3)'},
+          {lab:'x + 2y − 1 = 0', kind:'m', act:A=>{ A.seg([-25,13],[15,-7],'','#7B57C2',{w:2.5}); A.legend('Asíntota x + 2y − 1 = 0','#7B57C2'); }} ],
+  orient:orientMsg('h','El vértice está a la izquierda del centro.','C y V′ están en y = 3: se abre a los lados.','C y V′ tienen la misma y…'),
+  steps:[
+    { t:'input', m:`a = |−9 − (−5)| = ${blank('a')}`, ans:{a:4}, done:A=>A.check('a','a = 4 · a² = 16') },
+    { t:'input', lead:'<h4>Pendiente de la asíntota</h4>', m:`2${Y} = −${X} + 1 &nbsp;→&nbsp; ${Y} = ${blank('m')}${X} + ${fr('1','2')}`, ans:{m:-.5}, hint:'Divide todo entre 2.' },
+    { t:'mc', q:'En una horizontal las asíntotas tienen pendiente ±b/a. Entonces…', opts:[
+      {h:'b/a = 1/2 (el ± ya incluye el signo −)', ok:true, fb:'<b>¡Exacto!</b> Las dos asíntotas son ±1/2; una de ellas es la que nos dieron.'},
+      {h:'b/a = −1/2', fb:'a y b son distancias: siempre positivas. El ± se encarga del signo.'}, {h:'a/b = 1/2', fb:'Esa es la vertical.'} ] },
+    { t:'input', m:`${fr('b','4')} = ${fr('1','2')} &nbsp;→&nbsp; b = ${blank('b')}`, ans:{b:2}, done:A=>A.check('b','b = 2 · b² = 4') },
+    buildH({h:-5,k:3,a2:16,b2:4,v:false},[{id:'d',label:'−1/2',val:'−1/2',hint:'La pendiente no va en la ecuación.'}]),
+  ] };
+
+/* ---------- 5 · Intermedio · guía #9 · hipérbola vertical con asíntotas ---------- */
+PROBLEMS.G9 = { guia:9,
+  view:[-5,7,-4,6], ell:{type:'hyperbola',h:1,k:1,a2:1,b2:4,v:true}, keepSegs:true,
+  answer:eqH(1,1,'1','4',true), recap:'Cruce de las asíntotas → centro. 2a → a. Vertical: pendiente = a/b → b.',
+  enun:'Determina la ecuación estándar de la hipérbola {0} con asíntotas {1} y {2}, y {3}.',
+  datos:[ {lab:'vertical', kind:'m', bank:'vertical'},
+          {lab:'x − 2y + 1 = 0', kind:'m', act:A=>{ A.seg([-9,-4],[11,6],'','#7B57C2',{w:2.5}); A.legend('x − 2y + 1 = 0','#7B57C2'); }},
+          {lab:'x + 2y − 3 = 0', kind:'m', act:A=>{ A.seg([-9,6],[11,-4],'','#B4458E',{w:2.5}); A.legend('x + 2y − 3 = 0','#B4458E'); }},
+          {lab:'longitud del eje real igual a 2', bank:'2a = 2'} ],
+  orient:orientMsg('v','Te lo dicen en el enunciado.','Vertical: se abre arriba y abajo.','Relee el enunciado: dice “vertical”.'),
+  steps:[
+    { t:'mc', q:'¿Dónde está el centro?', opts:[
+      {h:'Donde se cruzan las asíntotas: resuelvo el sistema', ok:true, fb:'<b>¡Sí!</b> Las asíntotas siempre se cruzan en el centro.'},
+      {h:'En el origen', fb:'Solo si las asíntotas se cruzan ahí.'}, {h:'En el corte de una asíntota con el eje y', fb:'Ese punto solo está en una de las rectas.'} ] },
+    { t:'reveal', lead:'<h4>Sumamos las dos ecuaciones (la y se cancela)</h4>', lines:[
+      {m:`(${X} − 2${Y} + 1) + (${X} + 2${Y} − 3) = 0`}, {m:`2${X} − 2 = 0 &nbsp;→&nbsp; ${X} = 1`}, {m:`1 − 2${Y} + 1 = 0`, why:'Sustituye x = 1 en la primera.'} ] },
+    { t:'input', m:`C = (${blank('h')} , ${blank('k')})`, ans:{h:1,k:1}, okMsg:'<b>¡Centro!</b> C(1, 1)', done:A=>{ A.pt(1,1,'C','C',[0,22]); A.check('centro','(1, 1)'); } },
+    { t:'input', m:`2a = 2 &nbsp;→&nbsp; a = ${blank('a')}`, ans:{a:1}, done:A=>A.check('a','a = 1 · a² = 1') },
+    { t:'input', lead:'<h4>Pendiente de las asíntotas</h4>', m:`${X} − 2${Y} + 1 = 0 &nbsp;→&nbsp; ${Y} = ${blank('m')}${X} + ${fr('1','2')}`, ans:{m:.5}, okMsg:'<b>¡Bien!</b> Pendientes ±1/2.' },
+    { t:'mc', q:'Como es VERTICAL, la pendiente de las asíntotas es…', opts:[
+      {h:'a/b', ok:true, fb:'<b>¡Exacto!</b> Vertical: sube a por cada b de avance.'}, {h:'b/a', fb:'Esa es la de la horizontal.'}, {h:'c/a', fb:'Eso es la excentricidad.'} ] },
+    { t:'input', m:`${fr('1','b')} = ${fr('1','2')} &nbsp;→&nbsp; b = ${blank('b')}`, ans:{b:2}, done:A=>A.check('b','b = 2 · b² = 4') },
+    buildH({h:1,k:1,a2:1,b2:4,v:true},[{id:'d',label:'b² = 1/4',val:'1/4',hint:'Eso saldría si fuera horizontal (b/a = 1/2).'}]),
+  ] };
+
+/* ---------- 6 · Intermedio · guía #4 · C, V y lado recto → general ---------- */
+PROBLEMS.G4 = { guia:4,
+  view:[-12,14,-16,8], H:320, ell:{type:'hyperbola',h:1,k:-4,a2:64,b2:36,v:true},
+  answer:eqH(1,-4,64,36,true), general:'16x² − 9y² − 32x − 72y + 448 = 0',
+  recap:'C y V → a. LR = 2b²/a → b². Al final, multiplica por el mcm y desarrolla.',
+  enun:'Determina la ecuación general de la hipérbola con {0}, {1} y {2}.',
+  datos:[ {lab:'C(1, −4)', pts:[{x:1,y:-4,t:'C',l:'C',lo:[14,4]}], check:['centro','(1, −4)']},
+          {lab:'V(1, 4)', pts:[{x:1,y:4,t:'V',l:'V',lo:[14,4]}], bank:'V(1, 4)'}, {lab:'lado recto 9', kind:'m', bank:'LR = 9'} ],
+  orient:orientMsg('v','El vértice está arriba del centro.','C y V están en x = 1: se abre arriba y abajo.','C y V tienen la misma x…'),
+  steps:[
+    { t:'input', m:`a = |4 − (−4)| = ${blank('a')}`, ans:{a:8}, done:A=>A.check('a','a = 8 · a² = 64') },
+    ...lrStep('8','9',9,36, A=>A.check('b','b = 6 · b² = 36')),
+    buildH({h:1,k:-4,a2:64,b2:36,v:true},[{id:'aa',label:'a = 8',val:'8',hint:'En el denominador va a², no a.'}]),
+    { t:'reveal', lead:'<h4>De ordinaria a general</h4>', lines:[
+      {m:`9(${Y} + 4)² − 16(${X} − 1)² = 576`, why:'Multiplica todo por 576 (el mcm de 64 y 36).'},
+      {m:`9${Y}² + 72${Y} + 144 − 16${X}² + 32${X} − 16 − 576 = 0`, why:'Desarrolla los binomios y pasa el 576.'},
+      {m:`−16${X}² + 9${Y}² + 32${X} + 72${Y} − 448 = 0`},
+      {m:`16${X}² − 9${Y}² − 32${X} − 72${Y} + 448 = 0`, why:'Multiplica por −1 para que x² quede positivo (opcional).'} ] },
+    genStep(`16${X}² − 9${Y}² − 32${X} − 72${Y} + ${blank('f')} = 0`, {f:448}),
+  ] };
+
+/* ---------- 7 · Intermedio · guía #8 · forma general → elementos ---------- */
+PROBLEMS.G8 = { guia:8,
+  view:[-10,6,-6,10], ell:{type:'hyperbola',h:-2,k:2,a2:9,b2:16,v:true}, orientLate:true,
+  answer:eqH(-2,2,9,16,true),
+  table:tbl([['Centro','(−2, 2)'],['Vértices','(−2, 5) y (−2, −1)'],['Focos','(−2, 7) y (−2, −3)'],['Asíntotas','pendiente ±3/4'],['Excentricidad','5/3'],['Lado recto','32/3']]),
+  recap:'Agrupar → factor común (con su signo) → completar cuadrados → dividir → leer las pistas.',
+  enun:'Determina todos los elementos de {0}.',
+  datos:[ {lab:'−9x² + 16y² − 36x − 64y − 116 = 0', bank:'forma general'} ],
+  dataMsg:'<b>Forma general.</b> La pasamos a ordinaria completando cuadrados.',
+  orient:orientMsg('v','Mira cuál término quedó positivo.','El positivo es el de y: se abre arriba y abajo, y a² = 9.','El término positivo es el que manda.'),
+  examExtra:[ {m:`c = ${blank('c')}`, ids:{c:5}, bank:'c = 5'}, {m:`e = ${blank('e')}`, ids:{e:5/3}, bank:'e = 5/3'} ],
+  examBuild: buildH({h:-2,k:2,a2:9,b2:16,v:true}),
+  steps:[
+    { t:'group', terms:[['−9x²','x'],['+ 16y²','y'],['− 36x','x'],['− 64y','y'],['− 116','c']], grouped:`−9${X}² − 36${X} + 16${Y}² − 64${Y} = 116` },
+    { t:'input', lead:'<h4>Factor común (¡el −9 sale con su signo!)</h4>', m:`−9(${X}² + ${blank('bx')}${X}) + 16(${Y}² − ${blank('by')}${Y}) = 116`, ans:{bx:4,by:4}, hint:'−36 ÷ (−9) = ? · −64 ÷ 16 = ?' },
+    { t:'input', lead:'<h4>Completa los cuadrados</h4>', m:`(${fr('4','2')})² = ${blank('sx')} &nbsp;&nbsp; (${fr('−4','2')})² = ${blank('sy')}`, ans:{sx:4,sy:4} },
+    { t:'reveal', lead:'<h4>Súmalos en los dos lados</h4>', lines:[
+      {m:`−9(${X}² + 4${X} + <span class="hl">4</span>) + 16(${Y}² − 4${Y} + <span class="hl">4</span>) = 116 <span class="hl">− 9·4</span> <span class="hl">+ 16·4</span>`, why:'El 4 del grupo de x está multiplicado por −9: al otro lado RESTA 36.'} ] },
+    { t:'input', m:`116 − 36 + 64 = ${blank('rt')}`, ans:{rt:144} },
+    { t:'reveal', lines:[ {m:`16${par(Y,2)} − 9${par(X,-2)} = 144`, why:'Escribe primero el término positivo.'} ] },
+    { t:'input', lead:'<h4>Divide entre 144</h4>', m:`${fr(par(Y,2), blank('dy'))} − ${fr(par(X,-2), blank('dx'))} = 1`, ans:{dy:9,dx:16}, okMsg:'<b>¡Forma ordinaria!</b>' },
+    { t:'orientHere' },
+    { t:'input', lead:'<h4>Centro</h4>', m:`C = (${blank('h')} , ${blank('k')})`, ans:{h:-2,k:2}, wrong:{h:{'2':'Signo al revés: (x + 2) → h = −2.'}, k:{'-2':'Signo al revés: (y − 2) → k = 2.'}},
+      done:A=>{ A.pt(-2,2,'C','C',[14,4]); A.check('centro','(−2, 2)'); } },
+    { t:'input', m:`a = ${blank('a')} &nbsp;&nbsp; b = ${blank('b')} &nbsp;&nbsp; c = √(9 + 16) = ${blank('c')}`, ans:{a:3,b:4,c:5},
+      done:A=>{ A.check('a','a = 3 · a² = 9'); A.check('b','b = 4 · b² = 16'); A.bank('c = 5'); } },
+    { t:'input', lead:'<h4>Vértices y focos (sobre la vertical x = −2)</h4>', m:`V = (−2 , 2 ± ${blank('v')}) &nbsp;&nbsp; F = (−2 , 2 ± ${blank('f')})`, ans:{v:3,f:5},
+      done:A=>{ A.pt(-2,5,'V','V',[14,4]); A.pt(-2,-1,'V','V′',[14,4]); A.pt(-2,7,'F','F',[-14,4]); A.pt(-2,-3,'F','F′',[-14,4]); } },
+    { t:'input', lead:'<h4>Asíntotas, excentricidad y lado recto</h4><p class="note">Vertical → pendiente ±a/b.</p>', m:`±${blank('m')} &nbsp;&nbsp; e = ${blank('e')} &nbsp;&nbsp; LR = ${blank('lr')}`, ans:{m:.75,e:5/3,lr:32/3},
+      hint:'a/b = 3/4 · e = c/a = 5/3 · LR = 2b²/a = 32/3', okMsg:'<b>¡Todos los elementos!</b>' },
+  ] };
+
+/* ---------- 8 · Avanzado · guía #12 · centro, lado recto y excentricidad ---------- */
+PROBLEMS.G12 = { guia:12,
+  view:[-20,12,-10,12], ell:{type:'hyperbola',h:-4,k:1,a2:64,b2:36,v:false},
+  answer:eqH(-4,1,64,36,false), recap:'Dos pistas que dependen de a (e y LR) + c² = a² + b² → una ecuación en a.',
+  enun:'Determina la ecuación estándar de la hipérbola {0} de {1}, {2} y {3}.',
+  datos:[ {lab:'horizontal', kind:'m', bank:'horizontal'}, {lab:'centro (−4, 1)', pts:[{x:-4,y:1,t:'C',l:'C',lo:[0,22]}], check:['centro','(−4, 1)']},
+          {lab:'lado recto 9', kind:'m', bank:'LR = 9'}, {lab:'excentricidad 5/4', kind:'m', bank:'e = 5/4'} ],
+  orient:orientMsg('h','Te lo dicen en el enunciado.','Horizontal: se abre a los lados.','Relee: dice “horizontal”.'),
+  steps:[
+    { t:'info', html:`<div class="stop"><b>No tenemos a, b ni c… pero las dos pistas dependen de a:</b></div>${M(`e = ${fr('c','a')} = ${fr('5','4')} &nbsp;→&nbsp; <span class="hlt">c = ${fr('5a','4')}</span>`)}${M(`LR = ${fr('2b²','a')} = 9 &nbsp;→&nbsp; <span class="hlt">b² = ${fr('9a','2')}</span>`)}` },
+    { t:'mc', q:'¿Qué relación junta c, a y b²?', opts:[
+      {h:'c² = a² + b²', ok:true, fb:'<b>¡Esa!</b> Sustituimos c y b² y queda una sola incógnita: a.'}, {h:'a² = b² + c²', fb:'Esa es la de la elipse.'}, {h:'e = b/a', fb:'No: e = c/a.'} ] },
+    { t:'reveal', lead:'<h4>Sustituimos</h4>', lines:[
+      {m:`(${fr('5a','4')})² = a² + ${fr('9a','2')}`}, {m:`${fr('25a²','16')} = a² + ${fr('9a','2')}`},
+      {m:'25a² = 16a² + 72a', why:'Multiplica todo por 16.'}, {m:'<span class="hl">9a² − 72a = 0 &nbsp;→&nbsp; 9a(a − 8) = 0</span>', why:'Factor común 9a.'} ] },
+    { t:'input', lead:'<div class="stop"><b>Dos soluciones:</b> a = 0 o a = 8. ¿Cuál sirve?</div>', m:`a = ${blank('a')}`, ans:{a:8}, wrong:{a:{'0':'Con a = 0 no hay hipérbola: a es una distancia positiva.'}},
+      done:A=>A.check('a','a = 8 · a² = 64') },
+    { t:'input', m:`b² = ${fr('9 · 8','2')} = ${blank('b2')} &nbsp;&nbsp; c = ${fr('5 · 8','4')} = ${blank('c')}`, ans:{b2:36,c:10}, okMsg:'<b>¡Comprobación!</b> 64 + 36 = 100 = 10² ✓',
+      done:A=>{ A.check('b','b = 6 · b² = 36'); A.bank('c = 10'); } },
+    buildH({h:-4,k:1,a2:64,b2:36,v:false},[{id:'aa',label:'a = 8',val:'8',hint:'En el denominador va a², no a.'},{id:'c2',label:'c² = 100',val:'100',hint:'c² no va en la ecuación.'}]),
+  ] };
+
+/* ---------- 9 · Avanzado · guía #7 · forma general con lado derecho NEGATIVO ---------- */
+PROBLEMS.G7 = { guia:7,
+  view:[-6,8,-8,4], ell:{type:'hyperbola',h:1,k:-2,a2:2,b2:4,v:true}, orientLate:true,
+  answer:eqH(1,-2,2,4,true),
+  table:tbl([['Centro','(1, −2)'],['Vértices','(1, −2 ± √2)'],['Focos','(1, −2 ± √6)'],['Extremos eje imaginario','(3, −2) y (−1, −2)'],['Asíntotas','pendiente ±√2/2'],['Excentricidad','√3 ≈ 1.73'],['Lado recto','4√2 ≈ 5.66']]),
+  recap:'Si al completar cuadrados el lado derecho sale negativo, la orientación se voltea.',
+  enun:'Determina todos los elementos de la hipérbola {0}.',
+  datos:[ {lab:'3x² − 6y² − 6x − 24y − 9 = 0', bank:'forma general'} ],
+  dataMsg:'<b>Forma general.</b> Cuidado: esta tiene una sorpresa al final.',
+  orient:orientMsg('v','Después de dividir, ¿cuál término quedó positivo?','¡El de y! Aunque en la general el x² era positivo, al dividir entre −12 todo se volteó: es vertical.','Fíjate en la forma ordinaria final, no en la general.'),
+  examExtra:[ {m:`c = ${blank('c')}`, ids:{c:Math.sqrt(6)}, bank:'c = √6'}, {m:`e = ${blank('e')}`, ids:{e:Math.sqrt(3)}, bank:'e = √3'} ],
+  examBuild: buildH({h:1,k:-2,a2:2,b2:4,v:true}),
+  steps:[
+    { t:'group', terms:[['3x²','x'],['− 6y²','y'],['− 6x','x'],['− 24y','y'],['− 9','c']], grouped:`3${X}² − 6${X} − 6${Y}² − 24${Y} = 9` },
+    { t:'input', lead:'<h4>Factor común</h4>', m:`3(${X}² − ${blank('bx')}${X}) − 6(${Y}² + ${blank('by')}${Y}) = 9`, ans:{bx:2,by:4}, hint:'6 ÷ 3 = ? · −24 ÷ (−6) = ?' },
+    { t:'input', lead:'<h4>Completa los cuadrados</h4>', m:`(${fr('−2','2')})² = ${blank('sx')} &nbsp;&nbsp; (${fr('4','2')})² = ${blank('sy')}`, ans:{sx:1,sy:4} },
+    { t:'reveal', lines:[ {m:`3(${X}² − 2${X} + <span class="hl">1</span>) − 6(${Y}² + 4${Y} + <span class="hl">4</span>) = 9 <span class="hl">+ 3·1</span> <span class="hl">− 6·4</span>`, why:'El grupo de y tiene −6: al otro lado RESTA 24.'} ] },
+    { t:'input', m:`9 + 3 − 24 = ${blank('rt')}`, ans:{rt:-12}, okMsg:'<b>¡Ojo! Salió negativo.</b>' },
+    { t:'info', html:`${M(`3${par(X,1)} − 6${par(Y,-2)} = −12`)}<div class="stop"><b>Lado derecho negativo.</b> Al dividir entre −12, TODOS los signos se voltean: el término de x queda negativo y el de y positivo.</div>` },
+    { t:'input', lead:'<h4>Divide entre −12 y ordena (positivo primero)</h4>', m:`${fr(par(Y,-2), blank('dy'))} − ${fr(par(X,1), blank('dx'))} = 1`, ans:{dy:2,dx:4}, hint:'−6 ÷ (−12)… el denominador es −12 ÷ (−6) = 2. Y −12 ÷ 3 = −4 → 4 con el signo volteado.' },
+    { t:'orientHere' },
+    { t:'input', lead:'<h4>Centro</h4>', m:`C = (${blank('h')} , ${blank('k')})`, ans:{h:1,k:-2}, wrong:{h:{'-1':'Signo al revés: (x − 1) → h = 1.'}, k:{'2':'Signo al revés: (y + 2) → k = −2.'}},
+      done:A=>{ A.pt(1,-2,'C','C',[14,4]); A.check('centro','(1, −2)'); } },
+    { t:'input', sqrt:true, lead:'<h4>a y b</h4><p class="note">Si no es cuadrado perfecto, deja la raíz (botón √).</p>', m:`a² = 2 → a = ${blank('a')} &nbsp;&nbsp; b² = 4 → b = ${blank('b')}`, ans:{a:Math.sqrt(2),b:2},
+      done:A=>{ A.check('a','a = √2 · a² = 2'); A.check('b','b = 2 · b² = 4'); } },
+    { t:'input', sqrt:true, m:`c² = 2 + 4 = ${blank('c2')} &nbsp;→&nbsp; c = ${blank('c')}`, ans:{c2:6,c:Math.sqrt(6)}, done:A=>A.bank('c = √6') },
+    { t:'input', sqrt:true, lead:'<h4>Vértices y focos (sobre x = 1)</h4>', m:`V = (1 , −2 ± ${blank('v')}) &nbsp;&nbsp; F = (1 , −2 ± ${blank('f')})`, ans:{v:Math.sqrt(2),f:Math.sqrt(6)},
+      done:A=>{ const r2=Math.sqrt(2), r6=Math.sqrt(6); A.pt(1,-2+r2,'V','V',[14,4]); A.pt(1,-2-r2,'V','V′',[14,4]); A.pt(1,-2+r6,'F','F',[-14,4]); A.pt(1,-2-r6,'F','F′',[-14,4]); } },
+    { t:'input', sqrt:true, lead:'<h4>Asíntotas, excentricidad y lado recto</h4><p class="note">Vale raíz o decimal (2 cifras).</p>', m:`pendiente ±${fr('a','b')} = ${blank('m')} &nbsp; e = ${blank('e')} &nbsp; LR = ${blank('lr')}`,
+      ans:{m:Math.sqrt(2)/2, e:Math.sqrt(3), lr:4*Math.sqrt(2)}, hint:'√2/2 ≈ 0.71 · e = √6/√2 = √3 ≈ 1.73 · LR = 2·4/√2 = 4√2 ≈ 5.66', okMsg:'<b>¡Todos los elementos!</b>' },
+  ] };
+
+/* ---------- 10 · Avanzado · guía #6 · origen, eje real en y, dos puntos ---------- */
+PROBLEMS.G6 = { guia:6,
+  view:[-8,8,-9,9], H:320, ell:{type:'hyperbola',h:0,k:0,a2:7.2,b2:4,v:true,a2L:'36/5'},
+  answer:eqH(0,0,'36/5','4',true), general:'9x² − 5y² + 36 = 0',
+  recap:'Cada punto se reemplaza → sistema de 2 ecuaciones (con u = 1/a², v = 1/b²).',
+  enun:'Determina la ecuación de la hipérbola de {0}, {1} y que pase por los puntos {2} y {3}.',
+  datos:[ {lab:'centro en el origen', pts:[{x:0,y:0,t:'C',l:'C',lo:[14,14]}], check:['centro','(0, 0)']},
+          {lab:'eje real sobre el eje y', kind:'m', bank:'eje real en y → vertical'},
+          {lab:'(4, 6)', pts:[{x:4,y:6,t:'P',l:'P₁'}], bank:'P₁(4, 6)'}, {lab:'(1, −3)', pts:[{x:1,y:-3,t:'P',l:'P₂'}], bank:'P₂(1, −3)'} ],
+  orient:orientMsg('v','Relee el enunciado: te lo dicen.','El eje real está sobre el eje y: se abre arriba y abajo.','“Eje real sobre el eje y”…'),
+  steps:[
+    { t:'info', html:`<h4>Plantilla vertical con centro (0, 0)</h4>${M(`${fr(sq(Y),'a²')} − ${fr(sq(X),'b²')} = 1`)}<p class="note">En la vertical, el término positivo es el de y.</p>` },
+    { t:'mc', q:'¿Qué hago con los puntos?', opts:[
+      {h:'Reemplazo cada punto en x y y: me da 2 ecuaciones', ok:true, fb:'<b>¡Eso!</b>'}, {h:'Saco el punto medio', fb:'El punto medio de dos puntos cualquiera no es un elemento de la hipérbola.'}, {h:'Calculo su distancia', fb:'Esa distancia no sirve aquí.'} ] },
+    { t:'drag', lead:'<h4>Punto 1: (4, 6)</h4><p class="note">¡Primero va la y!</p>', m:`${fr(sq(`(${slot('y')})`),'a²')} − ${fr(sq(`(${slot('x')})`),'b²')} = 1`, slots:{y:'y1',x:'x1'},
+      chips:[{id:'x1',label:'x = 4',val:'4',cls:'cx'},{id:'y1',label:'y = 6',val:'6',cls:'cy'},{id:'x2',label:'x = 1',val:'1',cls:'cx',hint:'Ese es del otro punto.'}],
+      hint:'La y va en el término de a² (el positivo).', after:M(`<span class="hlt">${fr('36','a²')} − ${fr('16','b²')} = 1</span> &nbsp; (1)`) },
+    { t:'drag', lead:'<h4>Punto 2: (1, −3)</h4>', m:`${fr(sq(`(${slot('y')})`),'a²')} − ${fr(sq(`(${slot('x')})`),'b²')} = 1`, slots:{y:'y2',x:'x2'},
+      chips:[{id:'x2',label:'x = 1',val:'1',cls:'cx'},{id:'y2',label:'y = −3',val:'−3',cls:'cy'},{id:'y1',label:'y = 6',val:'6',cls:'cy',hint:'Ese ya lo usaste.'}],
+      after:M(`<span class="hlt">${fr('9','a²')} − ${fr('1','b²')} = 1</span> &nbsp; (2)`) },
+    { t:'reveal', lead:'<h4>El sistema</h4><p class="note">Llama u = 1/a² y v = 1/b²:</p>', lines:[
+      {m:'36u − 16v = 1'}, {m:'9u − v = 1 &nbsp;→&nbsp; v = 9u − 1', why:'Despeja v de la (2).'}, {m:'36u − 16(9u − 1) = 1 &nbsp;→&nbsp; −108u = −15', why:'Sustituye en la (1).'} ] },
+    { t:'input', lead:'<p>Resuelve (o usa la calculadora) y escribe:</p>', m:`a² = ${blank('a2')} &nbsp;&nbsp; b² = ${blank('b2')}`, ans:{a2:7.2,b2:4},
+      hint:'u = 15/108 = 5/36 → a² = 36/5. v = 9u − 1 = 1/4 → b² = 4.', wrong:{a2:{'5/36':'Ese es u. Recuerda: a² = 1/u.'}, b2:{'0.25':'Ese es v. Recuerda: b² = 1/v.'}},
+      okMsg:'<b>¡Las 4 pistas!</b> a² = 36/5, b² = 4', done:A=>{ A.check('a','a² = 36/5'); A.check('b','b² = 4'); } },
+    buildH({h:0,k:0,a2:7.2,b2:4,v:true,a2L:'36/5'},[{id:'u',label:'5/36',val:'5/36',hint:'5/36 es u = 1/a². El denominador es a².'}]),
+    { t:'reveal', lead:'<h4>Forma general</h4>', lines:[ {m:`${fr(`5${Y}²`,'36')} − ${fr(`${X}²`,'4')} = 1`, why:'36/5 abajo = 5/36 arriba.'}, {m:`5${Y}² − 9${X}² = 36`, why:'Multiplica todo por 36.'} ] },
+    genStep(`9${X}² − 5${Y}² + ${blank('c')} = 0`, {c:36}),
+  ] };
+
+/* ---------- 11 · Avanzado · guía #11 · vertical, centro y dos puntos ---------- */
+PROBLEMS.G11 = { guia:11,
+  view:[-6,30,-6,22], H:340, ell:{type:'hyperbola',h:2,k:2,a2:1,b2:2,v:true},
+  answer:eqH(2,2,'1','2',true), general:'x² − 2y² − 4x + 8y − 2 = 0',
+  recap:'Con el centro conocido, cada punto se reemplaza en (y − k)² y (x − h)² → sistema → a² y b².',
+  enun:'Determina la ecuación general de la hipérbola {0} cuyo centro es {1} y que pasa por los puntos {2} y {3}.',
+  datos:[ {lab:'vertical', kind:'m', bank:'vertical'}, {lab:'C(2, 2)', pts:[{x:2,y:2,t:'C',l:'C',lo:[14,4]}], check:['centro','(2, 2)']},
+          {lab:'(6, −1)', pts:[{x:6,y:-1,t:'P',l:'P₁'}], bank:'P₁(6, −1)'}, {lab:'(26, 19)', pts:[{x:26,y:19,t:'P',l:'P₂',lo:[-12,-10]}], bank:'P₂(26, 19)'} ],
+  orient:orientMsg('v','Te lo dicen en el enunciado.','Vertical: se abre arriba y abajo.','Relee: dice “vertical”.'),
+  steps:[
+    { t:'info', html:`<h4>Plantilla vertical con C(2, 2)</h4>${M(eqH(2,2,'a²','b²',true))}` },
+    { t:'drag', lead:'<h4>Punto 1: (6, −1)</h4><p class="note">La y va con (y − 2) y la x con (x − 2).</p>', m:`${fr(sq(`(${slot('y')} − 2)`),'a²')} − ${fr(sq(`(${slot('x')} − 2)`),'b²')} = 1`, slots:{y:'y1',x:'x1'},
+      chips:[{id:'x1',label:'x = 6',val:'6',cls:'cx'},{id:'y1',label:'y = −1',val:'−1',cls:'cy'},{id:'x2',label:'x = 26',val:'26',cls:'cx',hint:'Ese es del otro punto.'}],
+      after:M(`${fr('(−3)²','a²')} − ${fr('(4)²','b²')} = 1 &nbsp;→&nbsp; <span class="hlt">${fr('9','a²')} − ${fr('16','b²')} = 1</span> &nbsp; (1)`) },
+    { t:'drag', lead:'<h4>Punto 2: (26, 19)</h4>', m:`${fr(sq(`(${slot('y')} − 2)`),'a²')} − ${fr(sq(`(${slot('x')} − 2)`),'b²')} = 1`, slots:{y:'y2',x:'x2'},
+      chips:[{id:'x2',label:'x = 26',val:'26',cls:'cx'},{id:'y2',label:'y = 19',val:'19',cls:'cy'},{id:'y1',label:'y = −1',val:'−1',cls:'cy',hint:'Ese ya lo usaste.'}],
+      after:M(`${fr('17²','a²')} − ${fr('24²','b²')} = 1 &nbsp;→&nbsp; <span class="hlt">${fr('289','a²')} − ${fr('576','b²')} = 1</span> &nbsp; (2)`) },
+    { t:'reveal', lead:'<h4>El sistema (u = 1/a², v = 1/b²)</h4>', lines:[
+      {m:'9u − 16v = 1'}, {m:'289u − 576v = 1'}, {m:'324u − 576v = 36', why:'Multiplica la (1) por 36 para igualar las v.'}, {m:'35u = 35 &nbsp;→&nbsp; u = 1', why:'Resta la (2).'} ] },
+    { t:'input', m:`a² = ${fr('1','u')} = ${blank('a2')} &nbsp;&nbsp; 9 − 16v = 1 → b² = ${fr('1','v')} = ${blank('b2')}`, ans:{a2:1,b2:2},
+      hint:'16v = 8 → v = 1/2 → b² = 2', done:A=>{ A.check('a','a = 1 · a² = 1'); A.check('b','b² = 2'); } },
+    buildH({h:2,k:2,a2:1,b2:2,v:true},[{id:'d',label:'1/2',val:'1/2',hint:'1/2 es v = 1/b². El denominador es b² = 2.'}]),
+    { t:'reveal', lead:'<h4>De ordinaria a general</h4>', lines:[
+      {m:`2(${Y} − 2)² − (${X} − 2)² = 2`, why:'Multiplica todo por 2.'},
+      {m:`2${Y}² − 8${Y} + 8 − ${X}² + 4${X} − 4 − 2 = 0`, why:'Desarrolla y pasa el 2.'},
+      {m:`${X}² − 2${Y}² − 4${X} + 8${Y} − 2 = 0`, why:'Multiplica por −1 y ordena.'} ] },
+    genStep(`${X}² − 2${Y}² − 4${X} + 8${Y} − ${blank('f')} = 0`, {f:2}),
+  ] };
+
+/* ---------- 12 · Avanzado · guía #5 · C, F y lado recto → factorizar ---------- */
+PROBLEMS.G5 = { guia:5,
+  view:[-22,20,-14,22], H:320, ell:{type:'hyperbola',h:-1,k:4,a2:81,b2:144,v:false},
+  answer:eqH(-1,4,81,144,false), general:'16x² − 9y² + 32x + 72y − 1424 = 0',
+  recap:'C y F → c. LR → b² en función de a. c² = a² + b² → cuadrática → factorizar.',
+  enun:'Determina la ecuación general de la hipérbola con {0}, {1} y {2}.',
+  datos:[ {lab:'C(−1, 4)', pts:[{x:-1,y:4,t:'C',l:'C',lo:[0,22]}], check:['centro','(−1, 4)']},
+          {lab:'F(14, 4)', pts:[{x:14,y:4,t:'F',l:'F',lo:[0,22]}], bank:'F(14, 4)'}, {lab:'lado recto 32', kind:'m', bank:'LR = 32'} ],
+  orient:orientMsg('h','El foco está a la derecha del centro.','C y F están en y = 4: se abre a los lados.','C y F tienen la misma y…'),
+  steps:[
+    cDist('|14 − (−1)|', 15, A=>{ A.seg([-1,4],[14,4],'c','#33291C',{lo:[0,-10]}); A.bank('c = 15'); }),
+    { t:'mc', q:'¿Cómo uso el lado recto si todavía no tengo a?', opts:[
+      {h:'LR = 2b²/a → despejo b² en función de a', ok:true, fb:'<b>¡Exacto!</b> Luego lo meto en c² = a² + b².'}, {h:'LR = 2a → a = 16', fb:'2a es el eje real, no el lado recto.'}, {h:'No sirve sin a', fb:'Sí sirve: deja b² en función de a.'} ] },
+    { t:'input', m:`32 = ${fr('2b²','a')} &nbsp;→&nbsp; b² = ${blank('k')}a`, ans:{k:16}, hint:'32a = 2b² → b² = 16a', done:A=>A.bank('b² = 16a') },
+    { t:'reveal', lead:'<h4>Sustituimos en c² = a² + b²</h4>', lines:[ {m:'15² = a² + 16a'}, {m:'<span class="hl">a² + 16a − 225 = 0</span>', why:'Todo a un lado.'} ] },
+    { t:'input', lead:'<div class="stop"><b>¡Alto! Polinomio de segundo grado → factoriza.</b> Usa tu calculadora.</div>', m:`a = ${blank('a')}`, ans:{a:9},
+      wrong:{a:{'-25':'a es una distancia: tiene que ser positiva. Descarta −25.'}}, hint:'(a + 25)(a − 9) = 0', okMsg:'<b>¡Súper!</b> a = 9', done:A=>A.check('a','a = 9 · a² = 81') },
+    { t:'input', m:`b² = 16 · 9 = ${blank('b2')}`, ans:{b2:144}, okMsg:'<b>Comprobación:</b> 81 + 144 = 225 = 15² ✓', done:A=>A.check('b','b = 12 · b² = 144') },
+    buildH({h:-1,k:4,a2:81,b2:144,v:false},[{id:'aa',label:'a = 9',val:'9',hint:'En el denominador va a², no a.'},{id:'d',label:'225',val:'225',hint:'225 es c².'}]),
+    { t:'reveal', lead:'<h4>De ordinaria a general</h4>', lines:[
+      {m:`16(${X} + 1)² − 9(${Y} − 4)² = 1296`, why:'Multiplica todo por 1296 (el mcm de 81 y 144).'},
+      {m:`16${X}² + 32${X} + 16 − 9${Y}² + 72${Y} − 144 − 1296 = 0`, why:'Desarrolla y pasa el 1296.'},
+      {m:`16${X}² − 9${Y}² + 32${X} + 72${Y} − 1424 = 0`} ] },
+    genStep(`16${X}² − 9${Y}² + 32${X} + 72${Y} − ${blank('f')} = 0`, {f:1424}),
+  ] };
+
+/* En modo examen, los que piden la ecuación general la piden al final */
+['G4','G5','G6','G11'].forEach(k=>{ const P=PROBLEMS[k], last=P.steps[P.steps.length-1]; P.examAfter=[{...last, hint:''}]; });
+
+/* ╔═ MOTOR (continuación): intro y problemas ═╗ */
+let slideIdx = 0, seen = new Set([0]);
+function renderIntro(){
+  const app = $('#app'); app.innerHTML='';
+  const stage = h('div','stage'); const track = h('div','track');
+  SLIDES.forEach((S,i)=>{
+    const sl = h('section','slide'); sl.setAttribute('aria-roledescription','diapositiva');
+    sl.innerHTML = `<h2>${S.t}</h2>${say(S.s, S.m, 74)}<div class="art">${S.art}</div>${S.foot?`<div class="rv" style="--d:1.2s;text-align:center;font-size:17px">${S.foot}</div>`:''}`;
+    track.appendChild(sl);
+  });
+  stage.appendChild(track); app.appendChild(stage);
+  const ctrl = h('div','ctrl');
+  ctrl.innerHTML = `<button class="arrow" id="prv" aria-label="Anterior">‹</button><div class="pips" id="pips"></div><button class="arrow" id="nxt" aria-label="Siguiente">›</button>`;
+  app.appendChild(ctrl);
+  app.appendChild(h('div','swipe-hint','Desliza o usa las flechas'));
+  $('#prv').onclick=()=>goSlide(slideIdx-1); $('#nxt').onclick=()=>goSlide(slideIdx+1);
+  // swipe
+  let sx=null, sy=null;
+  stage.addEventListener('pointerdown',e=>{ if(e.target.closest('input,button')) return; sx=e.clientX; sy=e.clientY; });
+  stage.addEventListener('pointerup',e=>{ if(sx==null) return; const dx=e.clientX-sx, dy=e.clientY-sy; sx=null; if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)) goSlide(slideIdx + (dx<0?1:-1)); });
+  SLIDES.forEach((S,i)=>{ if(S.init) S.init($$('.slide')[i]); });
+  $$('[data-practicar]').forEach(b=> b.onclick = ()=> openProblem(ORDER[0]));
+  goSlide(slideIdx, true);
+}
+function goSlide(i, instant){
+  if(i<0 || i>=SLIDES.length) return;
+  slideIdx = i; seen.add(i);
+  const track = $('.track'); if(!track) return;
+  if(instant){ track.style.transition='none'; requestAnimationFrame(()=>track.style.transition=''); }
+  track.style.transform = `translateX(${-100*i}%)`;
+  $$('.slide').forEach((s,j)=>{ s.classList.remove('on'); if(j===i){ void s.offsetWidth; s.classList.add('on'); } });
+  $('#pips').innerHTML = SLIDES.map((_,j)=>`<span class="pip ${j===i?'on':seen.has(j)?'seen':''}"></span>`).join('');
+  $('#prv').disabled = i===0; $('#nxt').disabled = i===SLIDES.length-1;
+  requestAnimationFrame(()=>fit($$('.slide')[i]));
+}
+document.addEventListener('keydown',e=>{
+  if(!$('.track')) return; if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowRight') goSlide(slideIdx+1); if(e.key==='ArrowLeft') goSlide(slideIdx-1);
+});
+
+/* =========================================================
+   MOTOR DE PROBLEMAS
+   ========================================================= */
+const levelOf = pos => LEVELS.findIndex(l=>pos<=l.to);
+let MODE = 'guiado';
+let done = new Set();
+try{ done = new Set(JSON.parse(localStorage.getItem('eurema-'+TOOL.id+'-done')||'[]')); }catch(e){}
+const saveDone = ()=>{ try{ localStorage.setItem('eurema-'+TOOL.id+'-done', JSON.stringify([...done])); }catch(e){} };
+
+let S = null; // estado del problema actual
+
+function renderNav(active){
+  const nav = $('#nav'); nav.innerHTML='';
+  const ib = h('button','intro-btn'+(active==='intro'?' on':''),'▶ '+TOOL.introLabel); ib.onclick=()=>{ slideIdx=0; showIntro(); };
+  nav.appendChild(ib);
+  let grp = null, gl = -1;
+  ORDER.forEach((n,pos)=>{
+    const L = levelOf(pos);
+    if(L!==gl){ gl=L; grp = h('div','lg l'+L); grp.appendChild(h('div','lgd')); grp.appendChild(h('div','lgn',LEVELS[L].name)); nav.appendChild(grp); }
+    const b = h('button','pd l'+L+(n===active?' on':'')+(done.has(n)&&n!==active?' done':''),`<span>${pos+1}</span>`);
+    b.setAttribute('aria-label', `Problema ${pos+1}, nivel ${LEVELS[L].name.toLowerCase()}`);
+    b.onclick = ()=> openProblem(n);
+    $('.lgd',grp).appendChild(b);
+  });
+}
+function showIntro(){ S=null; renderNav('intro'); renderIntro(); window.scrollTo({top:0}); }
+
+function openProblem(n, mode){
+  if(mode) MODE = mode;
+  const def = PROBLEMS[n];
+  renderNav(n);
+  const app = $('#app'); app.innerHTML='';
+  const board = h('div','board');
+  board.innerHTML = `
+    <div class="mission" style="grid-template-columns:repeat(${MISSION.length},1fr)">
+      ${MISSION.map(x=>`<div class="mi" data-k="${x.k}"><div class="lb"><span class="ck"></span>${x.l}</div><div class="vl">—</div></div>`).join('')}
+    </div>
+    <div class="bankrow" id="bank"><span class="bl">Pistas:</span></div>
+    <div class="planehost" id="ph"></div>
+    <div class="boardtools"><button class="linkbtn" id="tgl">Ocultar plano</button><button class="linkbtn" id="rst">Reiniciar</button></div>`;
+  app.appendChild(board);
+  const mb = h('div','modebar');
+  mb.innerHTML = `<span class="ml">Modo</span><button class="mp ${MODE==='guiado'?'on':''}" data-m="guiado">Guiado<small>paso a paso con preguntas</small></button><button class="mp ${MODE==='examen'?'on':''}" data-m="examen">Examen<small>solo la misión, sin ayudas</small></button>`;
+  app.appendChild(mb);
+  $$('.mp',mb).forEach(x=> x.onclick = ()=>{ if(x.dataset.m!==MODE) openProblem(n, x.dataset.m); });
+  const ruta = h('div','ruta'); app.appendChild(ruta);
+  S = { n, def, board, ruta, mode:MODE, t0:Date.now(), errs:0, planes:[{ view:def.view, pts:[], segs:[], ell:null, H:def.H||300 }], stepIdx:-1, steps:[], checks:{}, dual:false };
+  $('#tgl').onclick = ()=>{ board.classList.toggle('min'); $('#tgl').textContent = board.classList.contains('min')?'Mostrar plano':'Ocultar plano'; };
+  $('#rst').onclick = ()=> openProblem(n);
+  if(def.noPlane){ board.classList.add('min'); $('#tgl').style.display='none'; $('#ph').style.display='none'; }
+  drawPlanes();
+  // construir lista completa de pasos: datos → orientación → pasos → final
+  if(MODE==='examen' && !def.noExam){
+    const build = def.examBuild || def.steps.find(s=>s.isBuild);
+    S.steps = [ dataStep(def), ...EXAM_STEPS(def), ...(build?[build]:[]), ...(def.examAfter||[]), finalStep(def) ];
+  } else {
+    S.steps = [ dataStep(def), ...(def.orient && !def.orientLate ? [orientStep(def)] : []), ...def.steps.map(s=> s.t==='orientHere'? orientStep(def) : s), finalStep(def) ];
+  }
+  window.scrollTo({top:0});
+  nextStep();
+}
+
+/* --- API que usan los pasos --- */
+const API = {
+  check(k, val){ S.checks[k]=val; const mi = $(`.mi[data-k="${k}"]`, S.board); mi.classList.add('got','flash'); $('.vl',mi).innerHTML = val.replace(' · ','<br>'); setTimeout(()=>mi.classList.remove('flash'),900); },
+  bank(txt){ const c = h('span','clue',txt); $('#bank').appendChild(c); c.scrollIntoView({block:'nearest',inline:'end',behavior:'smooth'}); },
+  pt(x,y,t,l,lo,pi=0){ S.planes[pi].pts.push({x,y,t,l,lo,fresh:true}); drawPlanes(); },
+  seg(a,b,lab,col,opt={},pi=0){ S.planes[pi].segs.push({a,b,lab,col,...opt}); drawPlanes(); },
+  clearSegs(pi=0){ S.planes[pi].segs=[]; drawPlanes(); },
+  ghost(pi=0, e){ const E = e || S.def.curve || S.def.ell; S.planes[pi].ell = {...E, mode:'ghost'}; drawPlanes(); },
+  solid(pi=0, e){ const E = e || S.def.curve || S.def.ell; S.planes[pi].ell = {...E, mode:'solid'}; S.planes[pi].drawn=false; drawPlanes(); },
+  full(){ // muestra tenues los puntos notables de la curva final
+    const e = S.def.curve || S.def.ell, P = S.planes[0];
+    if(!e){ if(!S.def.keepSegs) P.segs=[]; drawPlanes(); return; }
+    elementsOf(e).forEach(([x,y,t])=>{ if(!P.pts.some(p=>same(p.x,x)&&same(p.y,y))) P.pts.push({x,y,t,faint:true}); });
+    if(!S.def.keepSegs) P.segs=[]; this.solid(); },
+  rmSeg(id, pi=0){ S.planes[pi].segs = S.planes[pi].segs.filter(s=>s.id!==id); drawPlanes(); },
+  unlegend(lab, pi=0){ const P=S.planes[pi]; P.legend=(P.legend||[]).filter(l=>l.lab!==lab); drawPlanes(); },
+  legend(lab, col, dash=false, pi=0){ const P=S.planes[pi]; P.legend = P.legend||[]; const e=P.legend.find(l=>l.lab===lab); if(e){ e.col=col; e.dash=dash; } else P.legend.push({lab,col,dash}); drawPlanes(); },
+  setPlanes(arr){ S.planes = arr; drawPlanes(); },
+};
+function drawPlanes(){
+  const host = $('#ph'); if(!host) return; host.innerHTML='';
+  S.planes.forEach((P,i)=>{
+    const d = h('div','pl'+(P.mark==='bad'?' bad':P.mark==='good'?' good':''));
+    const svg = document.createElementNS(NS,'svg'); d.appendChild(svg);
+    if(P.cap) d.appendChild(h('div','cap',P.cap));
+    if(P.legend && P.legend.length) d.appendChild(h('div','legend', P.legend.map(l=>`<span><i style="border-top:3px ${l.dash?'dashed':'solid'} ${l.col}"></i>${l.lab}</span>`).join('')));
+    if(P.mark) d.appendChild(h('div','mark',P.mark==='bad'?'✗':'✓'));
+    host.appendChild(d); renderPlane(svg,P);
+  });
+  document.documentElement.style.setProperty('--board-h', S.board.offsetHeight+'px');
+}
+
+function nextStep(){
+  const prev = $('.st.cur', S.ruta); if(prev){ prev.classList.remove('cur'); prev.classList.add('done'); }
+  S.stepIdx++;
+  const step = S.steps[S.stepIdx]; if(!step) return;
+  const el = h('div','st cur'); el.appendChild(h('span','mk'));
+  const body = h('div','sb'); el.appendChild(body);
+  S.ruta.appendChild(el);
+  RENDER[step.t](step, body, el);
+  fit(el);
+  // desplazar para que el paso nuevo quede visible bajo el tablero
+  if(S.stepIdx>0) setTimeout(()=>{
+    const bh = S.board.getBoundingClientRect().height;
+    const top = el.getBoundingClientRect().top + window.scrollY - bh - 14;
+    window.scrollTo({top, behavior:'smooth'});
+  }, 60);
+}
+function finish(step, body){
+  if(step.after){ const a = h('div','',typeof step.after==='function'?step.after():step.after); body.appendChild(a); fit(a); }
+  if(step.done) step.done(API);
+  if(step.auto===false) return;
+  const b = h('button','btn',step.next||'Continuar'); body.appendChild(b); b.focus({preventScroll:true});
+  b.onclick = ()=>{ b.remove(); nextStep(); };
+}
+function feedback(body, ok, html){
+  if(!ok && S && S.mode==='examen') S.errs++;
+  let f = $(':scope > .fb', body); if(!f){ f=h('div','fb'); body.appendChild(f); }
+  f.className = 'fb '+(ok?'ok':'bad'); f.innerHTML = `${mountain(ok?'happy':'think',34)}<div>${html}</div>`; fit(f);
+}
+
+function sqrtKey(body, inps){
+  let last = inps[0];
+  inps.forEach(i=> i.addEventListener('focus',()=> last=i));
+  const k = h('button','btn ghost sqk','Insertar √'); k.type='button';
+  k.onpointerdown = e=> e.preventDefault();
+  k.onclick = ()=>{ if(!last || last.disabled) last = inps.find(i=>!i.disabled); if(!last) return; const p = last.selectionStart ?? last.value.length; last.value = last.value.slice(0,p)+'√'+last.value.slice(p); last.focus(); last.setSelectionRange(p+1,p+1); };
+  body.appendChild(k);
+}
+/* --- tipos de pasos --- */
+const RENDER = {
+  data(step, body){
+    const pos = ORDER.indexOf(S.n);
+    body.innerHTML = `<h4>Problema ${pos+1} <span class="lvl">· Nivel ${LEVELS[levelOf(pos)].name.toLowerCase()}${S.def.guia?` · guía #${S.def.guia}`:''}</span></h4><div class="enun"></div>${say(S.mode==='examen' ? 'Modo examen: yo solo te acompaño. Toca los datos y luego resuelve tú. ¡Tú puedes!' : 'Toca cada dato y lo ubico en el plano con sus coordenadas.', S.mode==='examen'?'wink':'happy', 50)}`;
+    let txt = step.enun; step.datos.forEach((d,i)=>{ txt = txt.replace(`{${i}}`, `<button class="dato${d.kind?' k'+d.kind:''}" data-i="${i}">${d.lab}</button>`); });
+    $('.enun',body).innerHTML = txt;
+    let left = step.datos.length;
+    if(!left){ $('.say',body) && $('.say',body).remove(); finish(step, body); return; }
+    $$('.dato',body).forEach(b=> b.onclick = ()=>{
+      if(b.classList.contains('used')) return; b.classList.add('used');
+      const d = step.datos[+b.dataset.i];
+      (d.pts||[]).forEach(p=> API.pt(p.x,p.y,p.t,p.l,p.lo));
+      if(d.bank) API.bank(d.bank);
+      if(d.check) API.check(d.check[0], d.check[1]);
+      if(d.act) d.act(API);
+      if(--left===0){ feedback(body,true, step.okMsg || '<b>¡Datos en el plano!</b>'); finish(step, body); }
+    });
+  },
+  mc(step, body){
+    body.innerHTML = `${step.lead?`<p>${step.lead}</p>`:''}<h4>${step.q}</h4><div class="opts ${step.row?'row':''}"></div>`;
+    const box = $('.opts',body);
+    step.opts.forEach(o=>{
+      const b = h('button','opt',o.h); box.appendChild(b);
+      b.onclick = ()=>{
+        if(o.ok){ b.classList.add('ok'); box.dataset.locked=1; feedback(body,true,o.fb||step.okMsg||'<b>¡Exacto!</b>'); finish(step, body); }
+        else { b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad'); feedback(body,false,o.fb||'Mmm, no. Piénsalo otra vez.'); }
+      };
+    });
+    fit(body);
+  },
+  info(step, body){ body.innerHTML = step.html; fit(body); finish(step, body); },
+  reveal(step, body){
+    const lines = typeof step.lines==='function' ? step.lines() : step.lines;
+    body.innerHTML = `${step.lead||''}<div class="lines">${lines.map(l=>`<span class="ln2">${typeof l==='string'?M(l):M(l.m)+(l.why?`<span class="why">${l.why}</span>`:'')}</span>`).join('')}</div>`;
+    const ls = $$('.ln2',body); let i=0;
+    const show = ()=>{ ls[i].classList.add('show'); fit(ls[i]); i++; };
+    show();
+    const b = h('button','btn ghost','Siguiente línea'); body.appendChild(b);
+    b.onclick = ()=>{ show(); if(i>=ls.length){ b.remove(); finish(step, body); } };
+    if(ls.length===1){ b.remove(); finish(step, body); }
+  },
+  input(step, body){
+    body.innerHTML = `${step.lead||''}${M(step.m)}${step.tail||''}`;
+    const inps = $$('input.blank',body);
+    if(step.sqrt) sqrtKey(body, inps);
+    const b = h('button','btn','Verificar'); body.appendChild(b);
+    inps.forEach(inp=> inp.addEventListener('keydown',e=>{ if(e.key==='Enter') b.click(); }));
+    setTimeout(()=>inps[0] && inps[0].focus({preventScroll:true}), 400);
+    b.onclick = ()=>{
+      let allOk = true, msg = null;
+      inps.forEach(inp=>{
+        const id = inp.dataset.inp, v = parseNum(inp.value), ans = step.ans[id];
+        const ok = !isNaN(v) && (Array.isArray(ans)? ans.some(a=>same(a,v)) : same(v,ans));
+        inp.classList.remove('okv','badv'); void inp.offsetWidth;
+        inp.classList.add(ok?'okv':'badv');
+        if(!ok){ allOk=false; const w = step.wrong && step.wrong[id]; if(w && !isNaN(v)){ for(const k in w) if(same(parseNum(k),v)) msg = w[k]; } }
+      });
+      if(allOk){ inps.forEach(i=>i.disabled=true); b.remove(); $$('.sqk',body).forEach(x=>x.remove()); feedback(body,true,step.okMsg||'<b>¡Correcto!</b>'); finish(step, body); }
+      else feedback(body,false, msg || step.hint || 'Revisa el valor marcado en rojo.');
+    };
+  },
+  group(step, body){
+    const phases = [['x','Toca los términos que tienen <b class="vx">x</b>'],['y','Ahora los que tienen <b class="vy">y</b>'],['c','Por último, el número solo: pásalo al otro lado']];
+    body.innerHTML = `<h4>Paso 1 · Agrupa los términos</h4><p class="ph"></p><div class="terms">${step.terms.map((t,i)=>`<button class="term" data-i="${i}">${t[0]}</button>`).join('')}<span class="term eq">= 0</span></div>`;
+    let p = 0, left = ()=> step.terms.filter(t=>t[1]===phases[p][0]).length, got = 0;
+    const setP = ()=>{ $('.ph',body).innerHTML = phases[p][1]; };
+    setP();
+    $$('.term[data-i]',body).forEach(bt=> bt.onclick = ()=>{
+      const t = step.terms[+bt.dataset.i];
+      if(bt.classList.contains('g')) return;
+      if(t[1]!==phases[p][0]){ bt.classList.remove('nope'); void bt.offsetWidth; bt.classList.add('nope'); feedback(body,false,'Ese no va en este grupo.'); return; }
+      bt.classList.add('g', 'g'+t[1]); got++;
+      if(got===left()){ got=0; p++; if(p<phases.length) setP(); else {
+        $('.ph',body).remove();
+        feedback(body,true,'<b>¡Agrupados!</b> Al pasar el número al otro lado, cambia de signo.');
+        const a = h('div','',M(step.grouped)); body.appendChild(a); fit(a); finish(step, body); } }
+    });
+  },
+  exam(step, body){
+    body.innerHTML = `<h4>Tu misión</h4>${say('Resuélvelo en tu cuaderno y escribe aquí tus pistas. Puedes usar √ (ej: √6 o 4√6/3) o decimales.','think',46)}<div class="exf">${step.fields.map(f=>M(f.m)).join('')}</div>`;
+    const inps = $$('input.blank',body); sqrtKey(body, inps);
+    const b = h('button','btn','Verificar'); body.appendChild(b);
+    const help = h('button','btn ghost','Me trabé: ver el modo guiado'); body.appendChild(help);
+    help.onclick = ()=> openProblem(S.n,'guiado');
+    inps.forEach(inp=> inp.addEventListener('keydown',e=>{ if(e.key==='Enter') b.click(); }));
+    setTimeout(()=>inps[0] && inps[0].focus({preventScroll:true}), 400);
+    b.onclick = ()=>{
+      let all = true;
+      step.fields.forEach(f=>{
+        let fok = true;
+        if(f.test){ // validación propia (ej. "cualquier punto de la recta")
+          const inps = Object.keys(f.ids).map(id=>$(`input[data-inp="${id}"]`,body));
+          if(!inps[0].disabled){
+            const vals = {}; Object.keys(f.ids).forEach((id,i)=> vals[id] = parseNum(inps[i].value));
+            const ok = Object.values(vals).every(v=>!isNaN(v)) && f.test(vals); f._vals = vals;
+            inps.forEach(inp=>{ inp.classList.remove('okv','badv'); void inp.offsetWidth; inp.classList.add(ok?'okv':'badv'); });
+            if(!ok) fok = false;
+          }
+        } else Object.entries(f.ids).forEach(([id,ans])=>{
+          const inp = $(`input[data-inp="${id}"]`,body); if(inp.disabled) return;
+          const v = parseNum(inp.value), ok = !isNaN(v) && same(v,ans);
+          inp.classList.remove('okv','badv'); void inp.offsetWidth; inp.classList.add(ok?'okv':'badv');
+          if(!ok) fok = false;
+        });
+        if(fok && !f.got){ f.got = true; Object.keys(f.ids).forEach(id=>$(`input[data-inp="${id}"]`,body).disabled=true); if(f.chk){ const [k,v]=f.chk(f._vals); API.check(k,v); } if(f.bank) API.bank(f.bank); }
+        if(!fok) all = false;
+      });
+      if(all){ b.remove(); help.remove(); $$('.sqk',body).forEach(x=>x.remove()); feedback(body,true,'<b>¡Misión completa!</b> Ahora arma la ecuación.'); finish(step, body); }
+      else feedback(body,false,'Revisa los valores en rojo. Los verdes ya quedaron guardados.');
+    };
+  },
+  drag(step, body){
+    body.innerHTML = `${step.lead||''}${M(step.m, step.big?'big':'')}<div class="chips"></div><div class="draghelp">Arrastra cada pieza a su casilla (o toca la pieza y luego la casilla).</div>`;
+    const chipsBox = $('.chips',body);
+    const chips = [...step.chips].sort(()=>Math.random()-.5);
+    let sel = null, left = Object.keys(step.slots).length;
+    const place = (chip, slotEl)=>{
+      const raw = step.slots[slotEl.dataset.slot], wants = Array.isArray(raw)? raw : [raw], want = wants[0];
+      if(slotEl.classList.contains('fill')) return;
+      const core = new Set(['h','k','a2','b2']);
+      const wantChip = step.chips.find(x=>x.id===want);
+      const cObj = step.chips.find(x=>x.id===chip.dataset.id);
+      let okPlace = wants.includes(chip.dataset.id) || (core.has(chip.dataset.id) && core.has(want) && wantChip && String(wantChip.val)===chip.dataset.val);
+      let grpMsg = null;
+      if(okPlace && cObj && cObj.grp){ const other = $$('.slot.fill',body).find(sl=>sl.dataset.grp && sl.dataset.grp!==cObj.grp);
+        if(other){ okPlace = false; grpMsg = step.grpHint || 'Usa las dos coordenadas del mismo punto.'; } }
+      if(okPlace){
+        if(cObj && cObj.grp){ slotEl.dataset.grp = cObj.grp; S.vars = S.vars||{}; S.vars[step.key||'grp'] = cObj.grp; }
+        slotEl.textContent = chip.dataset.val; slotEl.classList.add('fill');
+        const c = step.chips.find(x=>x.id===chip.dataset.id); if(c && !c.reuse) chip.classList.add('used');
+        chip.classList.remove('sel'); sel=null; $$('.slot',body).forEach(s=>s.classList.remove('sel-target'));
+        fit(body);
+        if(--left===0){ feedback(body,true, step.okMsg || '<b>¡Armada!</b>'); $('.draghelp',body).remove(); chipsBox.remove(); finish(step, body); }
+      } else {
+        slotEl.classList.remove('bad'); void slotEl.offsetWidth; slotEl.classList.add('bad');
+        const c = step.chips.find(x=>x.id===chip.dataset.id);
+        feedback(body,false, grpMsg || (c&&c.hint) || step.hint || 'Esa pieza no va ahí. Revisa tus pistas.');
+        setTimeout(()=>slotEl.classList.remove('bad'),500);
+      }
+    };
+    chips.forEach(c=>{
+      const el = h('span','chip '+(c.cls||''), c.label); el.dataset.id=c.id; el.dataset.val=c.val; chipsBox.appendChild(el);
+      let start=null, ghost=null;
+      el.addEventListener('pointerdown',e=>{ start={x:e.clientX,y:e.clientY}; el.setPointerCapture(e.pointerId); });
+      el.addEventListener('pointermove',e=>{
+        if(!start) return;
+        if(!ghost && Math.hypot(e.clientX-start.x,e.clientY-start.y)>6){ ghost = el.cloneNode(true); ghost.classList.add('ghost'); document.body.appendChild(ghost); }
+        if(ghost){ ghost.style.left=(e.clientX-ghost.offsetWidth/2)+'px'; ghost.style.top=(e.clientY-ghost.offsetHeight/2)+'px';
+          $$('.slot',body).forEach(s=>s.classList.remove('over'));
+          const under = document.elementFromPoint(e.clientX,e.clientY); const sl = under && under.closest('.slot'); if(sl && body.contains(sl)) sl.classList.add('over'); }
+      });
+      el.addEventListener('pointerup',e=>{
+        if(ghost){ ghost.remove(); ghost=null; $$('.slot',body).forEach(s=>s.classList.remove('over'));
+          const under = document.elementFromPoint(e.clientX,e.clientY); const sl = under && under.closest('.slot'); if(sl && body.contains(sl)) place(el, sl); }
+        else { // tap
+          $$('.chip',body).forEach(x=>x.classList.remove('sel'));
+          if(sel===el){ sel=null; $$('.slot',body).forEach(s=>s.classList.remove('sel-target')); }
+          else { sel=el; el.classList.add('sel'); $$('.slot:not(.fill)',body).forEach(s=>s.classList.add('sel-target')); }
+        }
+        start=null;
+      });
+      el.addEventListener('pointercancel',()=>{ if(ghost) ghost.remove(); ghost=null; start=null; });
+    });
+    $$('.slot',body).forEach(s=> s.addEventListener('click',()=>{ if(sel) place(sel, s); }));
+  },
+  final(step, body, el){
+    el.classList.add('final');
+    const d = S.def;
+    const secs = Math.round((Date.now()-S.t0)/1000), tt = `${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}`;
+    const stats = S.mode==='examen' ? `<div class="stats"><div><b>${tt}</b>tiempo</div><div><b>${S.errs}</b>${S.errs===1?'error':'errores'}</div><div><b>${S.errs===0?'100':Math.max(60,100-8*S.errs)}</b>puntaje</div></div>` : '';
+    body.innerHTML = `${say(`¡Misión cumplida${S.mode==='examen'?' en modo examen':''}! ${S.mode==='examen' && S.errs===0 ? '¡Sin un solo error!' : '¡Lo lograste!'}`,'joy',64)}<div class="win">${M(d.answer,'big')}${d.general?M(d.general):''}</div>${stats}${d.table||''}<p class="note">${d.recap||''}</p>`;
+    fit(body); API.full(); done.add(S.n); saveDone(); renderNav(S.n); confetti();
+    const nextN = ORDER[ORDER.indexOf(S.n)+1];
+    const b = h('button','btn', nextN?`Ir al problema ${ORDER.indexOf(nextN)+1}`:'Ver el recorrido completo'); body.appendChild(b);
+    b.onclick = ()=> nextN ? openProblem(nextN) : showSummary();
+  },
+};
+
+function dataStep(def){ return { t:'data', enun:def.enun, datos:def.datos, okMsg:def.dataMsg, done:def.afterData, auto:true, next:'Continuar' }; }
+function orientStep(def, exam){
+  const Hsvg = TOOL.iconH || `<svg width="64" height="40" viewBox="0 0 64 40"><ellipse cx="32" cy="20" rx="28" ry="15" fill="${T.acc}" fill-opacity=".12" stroke="${T.acc}" stroke-width="3"/></svg>`;
+  const Vsvg = TOOL.iconV || `<svg width="64" height="40" viewBox="0 0 64 40"><ellipse cx="32" cy="20" rx="12" ry="18" fill="${T.acc}" fill-opacity=".12" stroke="${T.acc}" stroke-width="3"/></svg>`;
+  const O = def.orient || {ans: (def.curve||def.ell).v?'v':'h'};
+  const isH = O.ans==='h';
+  const yes = exam ? '<b>¡Correcto!</b>' : `<b>¡Sí!</b> ${O.why}`, no = exam ? 'No es esa.' : O.nope;
+  return { t:'mc', q:`¿Cuál es la orientación de ${TOOL.curveName}?`, lead: exam? '' : O.lead, row:true,
+    opts:[ {h:Hsvg+'Horizontal', ok:isH, fb: isH? yes : no},
+           {h:Vsvg+'Vertical', ok:!isH, fb: !isH? yes : no} ],
+    done: A=>{ A.check('orient', isH?'Horizontal':'Vertical'); if(!exam) A.ghost(); },
+    next: exam ? 'Continuar' : 'Ver la gráfica y seguir' };
+}
+function finalStep(def){ return { t:'final' }; }
+
+
+/* ---------- resumen final (usa SUMMARY del contenido) ---------- */
+function showSummary(){
+  S=null; renderNav(null);
+  $('#app').innerHTML = `<div class="slide on" style="min-height:auto"><h2>Tu mapa de estrategias</h2>
+    ${say(SUMMARY.say,'joy',64)}
+    <div style="border-top:1px solid var(--line);margin-top:14px">${SUMMARY.rows.map(r=>`<div class="sumrow"><b>${r[0]}</b><span>${r[1]}</span></div>`).join('')}</div>
+    <p style="font-family:Nunito;font-weight:900;font-size:22px;margin-top:22px">${SUMMARY.close}</p>
+    <button class="cta" onclick="showIntro()">Repasar el video</button></div>`;
+  confetti(); window.scrollTo({top:0});
+}
+
+/* ---------- arranque ---------- */
+document.title = `${TOOL.title} · EUREMA`;
+{ const bd = h('div','backdrop'); bd.setAttribute('aria-hidden','true'); bd.innerHTML = backdropSVG(); document.body.prepend(bd); }
+$('#subT').textContent = TOOL.subtitle;
+showIntro();
+</script>
+<style id="eurema-return-style">.eurema-return{position:fixed;z-index:99999;top:calc(12px + env(safe-area-inset-top,0px));left:12px;display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border:1px solid rgba(51,41,28,.16);border-radius:999px;background:rgba(253,246,232,.94);color:#1F8585;text-decoration:none;font:800 12px Manrope,'Nunito Sans',sans-serif;box-shadow:0 3px 12px rgba(51,41,28,.12);backdrop-filter:blur(8px)}.eurema-return:hover{background:#fff}</style><a class="eurema-return" href="/geometria/">← Geometría</a></body>
+</html>
